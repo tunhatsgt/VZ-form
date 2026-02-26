@@ -12,255 +12,154 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<title>Visa Manager - Hồ Sơ Châu Âu</title>
+<title>Visa Manager – Hồ Sơ Châu Âu</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Tesseract.js/4.1.1/tesseract.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docx@8.2.3/build/index.min.js"></script>
 <style>
-/* Ẩn header khi chạy trong iframe */
-body.in-iframe .hdr {
-  display: none;
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;font-size:14px;background:linear-gradient(135deg,#f5f7fa,#e8eaf0,#dfe3eb);color:#1a2332;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 15%,rgba(201,168,76,.12) 0%,transparent 40%),radial-gradient(ellipse at 80% 85%,rgba(100,140,200,.08) 0%,transparent 45%);pointer-events:none;z-index:0}
+.app{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 14px 80px}
 
-body.in-iframe .app {
-  padding-top: 20px;
-}
-/* === Arial toàn bộ - hỗ trợ tiếng Việt === */
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8eaf0 50%, #dfe3eb 100%);
-  color: #1a2332;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-body::before {
-  content:'';
-  position:fixed; inset:0;
-  background:
-    radial-gradient(ellipse at 20% 15%, rgba(201,168,76,.12) 0%, transparent 40%),
-    radial-gradient(ellipse at 80% 85%, rgba(100,140,200,.08) 0%, transparent 45%),
-    repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(201,168,76,.025) 40px, rgba(201,168,76,.025) 41px);
-  pointer-events:none; z-index:0;
-}
-.app { position:relative; z-index:1; max-width:1380px; margin:0 auto; padding:0 18px 60px; }
+/* HEADER */
+.hdr{text-align:center;padding:32px 20px 20px}
+.hdr::after{content:'';display:block;width:80px;height:2px;background:linear-gradient(90deg,transparent,#c9a84c,transparent);margin:16px auto 0}
+.badge{display:inline-block;background:rgba(201,168,76,.2);border:1px solid rgba(201,168,76,.4);color:#8b7234;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:4px 16px;border-radius:40px;margin-bottom:12px;font-weight:700}
+.hdr h1{font-size:clamp(20px,5vw,36px);font-weight:700;color:#1a2332;line-height:1.3}
+.hdr h1 span{color:#c9a84c}
+.hdr p{color:#5a6b7f;font-size:13px;margin-top:6px}
 
-/* === HEADER === */
-.hdr { text-align:center; padding:44px 20px 28px; }
-.hdr::after { content:''; display:block; width:110px; height:2px; background:linear-gradient(90deg,transparent,#c9a84c,transparent); margin:22px auto 0; }
-.badge { display:inline-block; background:rgba(201,168,76,.22); border:1px solid rgba(201,168,76,.45); color:#8b7234; font-size:11px; letter-spacing:2.5px; text-transform:uppercase; padding:5px 18px; border-radius:40px; margin-bottom:14px; font-weight:700; }
-.hdr h1 { font-family: Arial, sans-serif; font-size:clamp(22px,4.5vw,40px); font-weight:700; color:#1a2332; line-height:1.3; }
-.hdr h1 span { color:#c9a84c; }
-.hdr p { color:#5a6b7f; font-size:14px; margin-top:8px; }
+/* LANG BAR */
+.lang-bar{display:flex;justify-content:center;gap:8px;margin:0 0 18px}
+.lang-btn{display:flex;align-items:center;gap:6px;padding:9px 20px;border-radius:40px;border:1.5px solid rgba(201,168,76,.4);background:#fff;color:#5a6b7f;font-size:13px;cursor:pointer;transition:all .2s;font-weight:600}
+.lang-btn.active,.lang-btn:hover{background:#c9a84c;border-color:#c9a84c;color:#fff;box-shadow:0 4px 12px rgba(201,168,76,.3)}
 
-/* === LANG TOGGLE === */
-.lang-bar { display:flex; justify-content:center; gap:8px; margin:0 0 24px; }
-.lang-btn {
-  display:flex; align-items:center; gap:7px;
-  padding:9px 22px; border-radius:40px;
-  border:1px solid rgba(201,168,76,.4);
-  background:#ffffff; color:#5a6b7f;
-  font-family:Arial,sans-serif; font-size:13px;
-  cursor:pointer; transition:all .25s;
-  box-shadow: 0 2px 6px rgba(0,0,0,.05);
-}
-.lang-btn.active, .lang-btn:hover { background:#c9a84c; border-color:#c9a84c; color:#ffffff; font-weight:700; box-shadow: 0 4px 12px rgba(201,168,76,.3); }
+/* CARD */
+.card{background:#fff;border:1px solid rgba(201,168,76,.22);border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:0 4px 16px rgba(0,0,0,.07);animation:fadeUp .3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.sec-title{font-size:15px;font-weight:700;color:#8b7234;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.sec-title::before{content:'';width:4px;height:18px;background:#c9a84c;border-radius:2px;flex-shrink:0}
 
-/* === TELEX INDICATOR === */
-.telex-bar {
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  background:rgba(76,175,80,.1); border:1px solid rgba(76,175,80,.3);
-  border-radius:8px; padding:8px 16px; margin-bottom:18px;
-  font-size:12px; color:#2e7d32; font-weight:600;
-}
-.telex-bar .dot { width:8px; height:8px; background:#4caf50; border-radius:50%; animation:blink 2s infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:16px;background:#f0f2f5;padding:4px;border-radius:8px}
+.tab-btn{flex:1;padding:9px 6px;border:none;background:transparent;color:#5a6b7f;font-size:12px;font-weight:700;border-radius:6px;cursor:pointer;transition:all .2s;font-family:Arial,sans-serif}
+.tab-btn.active{background:#fff;color:#c9a84c;box-shadow:0 2px 6px rgba(0,0,0,.08)}
 
-/* === CARD === */
-.card {
-  background:#ffffff; border:1px solid rgba(201,168,76,.25);
-  border-radius:12px; padding:26px; margin-bottom:18px;
-  box-shadow:0 4px 16px rgba(0,0,0,.08);
-  animation:fadeUp .35s ease both;
-}
-@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+/* AI TOOLS */
+.ai-tools{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+@media(max-width:480px){.ai-tools{grid-template-columns:1fr}}
+.ai-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:8px;border:1.5px solid rgba(201,168,76,.35);background:rgba(201,168,76,.07);color:#1a2332;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;font-family:Arial,sans-serif}
+.ai-btn:hover{border-color:#c9a84c;background:rgba(201,168,76,.14)}
+.ai-btn.recording{border-color:#e74c3c;background:rgba(231,76,60,.1);color:#c0392b;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.3)}50%{box-shadow:0 0 0 8px rgba(231,76,60,0)}}
+.ai-btn .icon{font-size:18px}
 
-.sec-title {
-  font-family:Arial,sans-serif; font-size:16px; font-weight:700;
-  color:#8b7234; margin-bottom:18px;
-  display:flex; align-items:center; gap:10px;
-}
-.sec-title::before { content:''; width:4px; height:20px; background:#c9a84c; border-radius:2px; flex-shrink:0; }
+/* STATUS */
+.status{background:#f8f9fa;border:1px solid #dce0e5;border-radius:8px;padding:10px 13px;font-size:13px;color:#5a6b7f;min-height:40px;display:flex;align-items:center;gap:8px;margin-bottom:12px;transition:all .2s}
+.status.ok{color:#2e7d32;background:#f1f8f4;border-color:#a5d6a7}
+.status.err{color:#c62828;background:#ffebee;border-color:#ef9a9a}
+.status.run{color:#8b7234;background:#fff9e6;border-color:#ffe082}
+.spin{width:14px;height:14px;border:2px solid rgba(201,168,76,.3);border-top-color:#c9a84c;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* === TABS === */
-.tabs { display:flex; gap:4px; margin-bottom:18px; background:#f0f2f5; padding:5px; border-radius:8px; }
-.tab-btn {
-  flex:1; padding:9px; border:none; background:transparent;
-  color:#5a6b7f; font-family:Arial,sans-serif; font-size:13px; font-weight:700;
-  border-radius:6px; cursor:pointer; transition:all .2s;
-}
-.tab-btn.active { background:#ffffff; color:#c9a84c; box-shadow: 0 2px 6px rgba(0,0,0,.08); }
-.tc { display:none; }
-.tc.active { display:block; }
-
-/* === AI BUTTONS === */
-.ai-tools { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
-@media(max-width:560px){ .ai-tools{grid-template-columns:1fr} }
-.ai-btn {
-  display:flex; align-items:center; justify-content:center; gap:9px;
-  padding:14px 18px; border-radius:8px;
-  border:1px solid rgba(201,168,76,.35); background:rgba(201,168,76,.08);
-  color:#1a2332; font-family:Arial,sans-serif; font-size:13px; font-weight:700;
-  cursor:pointer; transition:all .22s;
-}
-.ai-btn:hover { border-color:#c9a84c; background:rgba(201,168,76,.15); color:#8b7234; transform:translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
-.ai-btn.recording { border-color:#e74c3c; background:rgba(231,76,60,.1); color:#c0392b; animation:pulse 1.4s infinite; }
-@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.3)} 50%{box-shadow:0 0 0 7px rgba(231,76,60,0)} }
-.ai-btn .icon { font-size:20px; }
-
-/* === STATUS BAR === */
-.status {
-  background:#f8f9fa; border:1px solid #dce0e5;
-  border-radius:8px; padding:11px 14px; font-size:13px; color:#5a6b7f;
-  min-height:42px; display:flex; align-items:center; gap:8px;
-  margin-bottom:14px; transition:all .25s; font-family:Arial,sans-serif;
-}
-.status.ok { color:#2e7d32; background:#f1f8f4; border-color:#a5d6a7; }
-.status.err { color:#c62828; background:#ffebee; border-color:#ef9a9a; }
-.status.run { color:#8b7234; background:#fff9e6; border-color:#ffe082; }
-.spin { width:15px; height:15px; border:2px solid rgba(201,168,76,.3); border-top-color:#c9a84c; border-radius:50%; animation:spin .7s linear infinite; flex-shrink:0; }
-@keyframes spin { to{transform:rotate(360deg)} }
-
-/* === VOICE WAVE === */
-.vwave { display:none; align-items:center; justify-content:center; gap:3px; height:28px; margin-bottom:10px; }
-.vwave.on { display:flex; }
-.vwave span { width:4px; background:#c9a84c; border-radius:2px; animation:wave .9s ease infinite; }
-.vwave span:nth-child(1){animation-delay:0s} .vwave span:nth-child(2){animation-delay:.1s}
-.vwave span:nth-child(3){animation-delay:.2s} .vwave span:nth-child(4){animation-delay:.3s}
+/* VOICE WAVE */
+.vwave{display:none;align-items:center;justify-content:center;gap:3px;height:26px;margin-bottom:10px}
+.vwave.on{display:flex}
+.vwave span{width:4px;background:#c9a84c;border-radius:2px;animation:wave .9s ease infinite}
+.vwave span:nth-child(1){animation-delay:0s}.vwave span:nth-child(2){animation-delay:.1s}
+.vwave span:nth-child(3){animation-delay:.2s}.vwave span:nth-child(4){animation-delay:.3s}
 .vwave span:nth-child(5){animation-delay:.4s}
-@keyframes wave { 0%,100%{height:6px} 50%{height:22px} }
+@keyframes wave{0%,100%{height:5px}50%{height:20px}}
 
-/* === FORM === */
-.fg { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:13px; }
-.fgrp { display:flex; flex-direction:column; gap:5px; }
-.fgrp.fw { grid-column:1/-1; }
-label {
-  font-family:Arial,sans-serif; font-size:11px; font-weight:700;
-  letter-spacing:.4px; color:#8b7234; text-transform:uppercase;
-}
-label .req { color:#e74c3c; margin-left:2px; }
-input, select, textarea {
-  background:#ffffff; border:1px solid #d0d5dd;
-  border-radius:7px; padding:10px 13px;
-  color:#1a2332; font-family:Arial,sans-serif; font-size:14px;
-  transition:all .18s; outline:none; width:100%;
-}
-input:focus, select:focus, textarea:focus {
-  border-color:#c9a84c; background:#fffbf0;
-  box-shadow:0 0 0 3px rgba(201,168,76,.15);
-}
-input::placeholder, textarea::placeholder { color:#a0aec0; font-family:Arial,sans-serif; }
-select option { background:#ffffff; color:#1a2332; }
-.input-err { border-color:#e74c3c !important; background:#fff5f5 !important; }
-.err-msg { font-size:11px; color:#c62828; font-family:Arial,sans-serif; }
+/* FORM */
+.fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.fgrp{display:flex;flex-direction:column;gap:5px}
+.fgrp.fw{grid-column:1/-1}
+label{font-size:11px;font-weight:700;letter-spacing:.4px;color:#8b7234;text-transform:uppercase}
+label .req{color:#e74c3c;margin-left:2px}
+input,select,textarea{background:#fff;border:1.5px solid #d0d5dd;border-radius:7px;padding:10px 12px;color:#1a2332;font-family:Arial,sans-serif;font-size:14px;transition:all .18s;outline:none;width:100%;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:#c9a84c;background:#fffbf0;box-shadow:0 0 0 3px rgba(201,168,76,.13)}
+input::placeholder,textarea::placeholder{color:#a0aec0}
+.input-err{border-color:#e74c3c!important;background:#fff5f5!important}
+.err-msg{font-size:11px;color:#c62828}
 
-/* === BUTTONS === */
-.btn-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; justify-content:flex-end; }
-.btn {
-  padding:11px 26px; border-radius:40px; border:none;
-  font-family:Arial,sans-serif; font-size:13px; font-weight:700;
-  cursor:pointer; transition:all .22s; display:flex; align-items:center; gap:7px;
+/* UPLOAD ZONE */
+.upzone{border:2px dashed #c9a84c;border-radius:10px;padding:22px;text-align:center;cursor:pointer;transition:all .22s;background:#fffbf0;user-select:none}
+.upzone:hover,.upzone:active{border-color:#8b7234;background:#fff9e6}
+.upzone .ui{font-size:32px;margin-bottom:8px}
+.upzone p{font-size:13px;color:#5a6b7f}
+#ocrImg{max-width:100%;max-height:180px;object-fit:contain;border-radius:7px;margin-top:10px;display:none;border:1px solid #dce0e5}
+.prog-bar{height:5px;background:#f0f2f5;border-radius:3px;overflow:hidden;margin-top:8px;display:none}
+.prog-fill{height:100%;background:linear-gradient(90deg,#c9a84c,#d4b55e);border-radius:3px;transition:width .3s;width:0}
+
+/* CAMERA BUTTON */
+.cam-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+@media(max-width:400px){.cam-row{grid-template-columns:1fr}}
+.cam-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:13px;border-radius:8px;border:1.5px solid rgba(201,168,76,.35);background:rgba(201,168,76,.07);color:#1a2332;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;font-family:Arial,sans-serif}
+.cam-btn:hover{border-color:#c9a84c;background:rgba(201,168,76,.14)}
+
+/* TELEX HINT */
+.telex-hint{background:#fff9e6;border:1px dashed #ffe082;border-radius:7px;padding:11px 14px;margin-bottom:12px;font-size:12px;color:#5a6b7f;line-height:1.7}
+.telex-hint strong{color:#8b7234}
+.telex-hint code{background:#fffbf0;padding:1px 5px;border-radius:3px;color:#8b7234;border:1px solid #ffe082}
+
+/* BUTTONS */
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;justify-content:flex-end}
+.btn{padding:11px 24px;border-radius:40px;border:none;font-family:Arial,sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn-p{background:linear-gradient(135deg,#c9a84c,#d4b55e);color:#fff;box-shadow:0 2px 8px rgba(201,168,76,.3)}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(201,168,76,.4)}
+.btn-s{background:#fff;border:1.5px solid #d0d5dd;color:#1a2332}
+.btn-s:hover{border-color:#c9a84c;color:#8b7234;background:#fffbf0}
+.btn-d{background:#fff;border:1px solid #ef9a9a;color:#c62828;padding:6px 12px;font-size:12px}
+.btn-d:hover{background:#ffebee}
+
+/* TABLE */
+.sum-bar{display:flex;align-items:center;justify-content:space-between;background:#f8f9fa;border:1px solid #dce0e5;border-radius:8px;padding:10px 16px;margin-bottom:12px;flex-wrap:wrap;gap:8px;font-size:14px}
+.cnt{background:#c9a84c;color:#fff;font-weight:700;font-size:13px;padding:2px 10px;border-radius:20px}
+.tbl-wrap{overflow:auto;border-radius:8px;border:1px solid #dce0e5;max-height:380px;background:#fff}
+.ptbl{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}
+.ptbl thead{background:#f8f9fa;position:sticky;top:0;z-index:2}
+.ptbl th{padding:10px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;color:#8b7234;border-bottom:2px solid #c9a84c}
+.ptbl td{padding:8px 12px;border-bottom:1px solid #f0f2f5;color:#1a2332}
+.ptbl tbody tr:hover{background:#fffbf0}
+.empty{text-align:center;padding:40px 20px;color:#a0aec0}
+.empty .ei{font-size:40px;margin-bottom:10px;opacity:.35}
+
+/* EXPORT */
+.exp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.exp-card{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 12px;border-radius:8px;border:1px solid #dce0e5;background:#fff;cursor:pointer;transition:all .2s}
+.exp-card:hover{border-color:#c9a84c;background:#fffbf0;transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.exp-card .ei{font-size:28px}
+.exp-card .el{font-size:13px;font-weight:700;color:#1a2332}
+.exp-card .es{font-size:11px;color:#5a6b7f}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:20px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:#fff;border-left:4px solid #c9a84c;border-radius:7px;padding:12px 14px;font-size:13px;color:#1a2332;box-shadow:0 4px 16px rgba(0,0,0,.14);animation:slideIn .25s ease;max-width:300px;border:1px solid #dce0e5}
+.toast.err{border-left-color:#e74c3c;background:#fff5f5}
+.toast.ok{border-left-color:#4caf50;background:#f1f8f4}
+@keyframes slideIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* GUIDE */
+.guide{background:#fff9e6;border:1px solid #ffe082;border-radius:8px;padding:12px 16px;font-size:13px;color:#5a6b7f;line-height:1.75}
+.guide strong{color:#8b7234}
+
+/* MIC PERMISSION NOTE */
+.mic-note{background:#e8f4fd;border:1px solid #90caf9;border-radius:8px;padding:10px 14px;font-size:12px;color:#1565c0;margin-bottom:12px;display:none}
+.mic-note.show{display:block}
+
+/* SAFE AREA (iPhone notch) */
+.app{padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+
+@media(max-width:600px){
+  .fg{grid-template-columns:1fr 1fr}
+  .exp-grid{grid-template-columns:1fr 1fr}
 }
-.btn-p { background:linear-gradient(135deg,#c9a84c,#d4b55e); color:#ffffff; box-shadow: 0 2px 8px rgba(201,168,76,.3); }
-.btn-p:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(201,168,76,.4); }
-.btn-s { background:#ffffff; border:1px solid #d0d5dd; color:#1a2332; }
-.btn-s:hover { border-color:#c9a84c; color:#8b7234; background:#fffbf0; }
-.btn-d { background:#ffffff; border:1px solid #ef9a9a; color:#c62828; padding:6px 13px; font-size:12px; }
-.btn-d:hover { background:#ffebee; border-color:#e74c3c; }
-
-/* === GUIDE === */
-.guide {
-  background:#fff9e6; border:1px solid #ffe082;
-  border-radius:8px; padding:14px 18px; font-size:13px; color:#5a6b7f;
-  line-height:1.75; font-family:Arial,sans-serif;
+@media(max-width:380px){
+  .fg{grid-template-columns:1fr}
 }
-.guide strong { color:#8b7234; }
-
-/* === SUMMARY BAR === */
-.sum-bar {
-  display:flex; align-items:center; justify-content:space-between;
-  background:#f8f9fa; border:1px solid #dce0e5;
-  border-radius:8px; padding:11px 18px; margin-bottom:14px;
-  flex-wrap:wrap; gap:8px; font-family:Arial,sans-serif; font-size:14px;
-}
-.cnt { background:#c9a84c; color:#ffffff; font-weight:700; font-size:13px; padding:2px 10px; border-radius:20px; }
-
-/* === TABLE === */
-.tbl-wrap { overflow:auto; border-radius:8px; border:1px solid #dce0e5; max-height:400px; background:#ffffff; }
-.ptbl { width:100%; border-collapse:collapse; font-size:13px; white-space:nowrap; font-family:Arial,sans-serif; }
-.ptbl thead { background:#f8f9fa; position:sticky; top:0; z-index:2; }
-.ptbl th { padding:11px 13px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; color:#8b7234; border-bottom:2px solid #c9a84c; }
-.ptbl td { padding:9px 13px; border-bottom:1px solid #f0f2f5; color:#1a2332; }
-.ptbl tbody tr:hover { background:#fffbf0; }
-.ptbl tbody tr:last-child td { border-bottom:none; }
-.empty { text-align:center; padding:44px 20px; color:#a0aec0; font-family:Arial,sans-serif; }
-.empty .ei { font-size:44px; margin-bottom:10px; opacity:.35; }
-
-/* === OCR UPLOAD === */
-.upzone {
-  border:2px dashed #c9a84c; border-radius:8px;
-  padding:26px; text-align:center; cursor:pointer; transition:all .22s; position:relative;
-  background:#fffbf0;
-}
-.upzone:hover { border-color:#8b7234; background:#fff9e6; }
-.upzone .ui { font-size:34px; margin-bottom:7px; }
-.upzone p { font-size:13px; color:#5a6b7f; font-family:Arial,sans-serif; }
-.upzone strong { color:#8b7234; }
-#ocrImg { max-width:100%; max-height:190px; object-fit:contain; border-radius:7px; margin-top:9px; display:none; border:1px solid #dce0e5; }
-.prog-bar { height:4px; background:#f0f2f5; border-radius:2px; overflow:hidden; margin-top:7px; display:none; }
-.prog-fill { height:100%; background:linear-gradient(90deg,#c9a84c,#d4b55e); border-radius:2px; transition:width .3s; width:0; }
-
-/* === EXPORT GRID === */
-.exp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:11px; }
-.exp-card {
-  display:flex; flex-direction:column; align-items:center; gap:7px;
-  padding:18px 14px; border-radius:8px; border:1px solid #dce0e5;
-  background:#ffffff; cursor:pointer; transition:all .22s;
-  font-family:Arial,sans-serif;
-}
-.exp-card:hover { border-color:#c9a84c; background:#fffbf0; transform:translateY(-3px); box-shadow: 0 4px 16px rgba(0,0,0,.1); }
-.exp-card .ei { font-size:30px; }
-.exp-card .el { font-size:13px; font-weight:700; color:#1a2332; }
-.exp-card .es { font-size:11px; color:#5a6b7f; }
-
-/* === TOAST === */
-.toast-wrap { position:fixed; bottom:22px; right:22px; z-index:9999; display:flex; flex-direction:column; gap:9px; }
-.toast {
-  background:#ffffff; border-left:4px solid #c9a84c; border-radius:7px;
-  padding:13px 16px; font-size:13px; color:#1a2332;
-  box-shadow:0 4px 16px rgba(0,0,0,.15); animation:slideIn .28s ease; max-width:310px;
-  font-family:Arial,sans-serif; border:1px solid #dce0e5;
-}
-.toast.err { border-left-color:#e74c3c; background:#fff5f5; }
-.toast.ok { border-left-color:#4caf50; background:#f1f8f4; }
-@keyframes slideIn { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
-
-/* === TELEX HINT === */
-.telex-hint {
-  background:#fff9e6; border:1px dashed #ffe082;
-  border-radius:7px; padding:12px 16px; margin-bottom:14px;
-  font-size:12px; color:#5a6b7f; line-height:1.7; font-family:Arial,sans-serif;
-}
-.telex-hint strong { color:#8b7234; }
-.telex-hint code { background:#fffbf0; padding:1px 5px; border-radius:3px; color:#8b7234; font-family:Arial,sans-serif; border:1px solid #ffe082; }
-
-::-webkit-scrollbar { width:5px; height:5px; }
-::-webkit-scrollbar-track { background:#f0f2f5; }
-::-webkit-scrollbar-thumb { background:#c9a84c; border-radius:3px; }
-::-webkit-scrollbar-thumb:hover { background:#8b7234; }
-@media(max-width:768px){ .fg{grid-template-columns:1fr} .ai-tools{grid-template-columns:1fr} .exp-grid{grid-template-columns:1fr 1fr} }
 </style>
 </head>
 <body>
@@ -268,1395 +167,724 @@ select option { background:#ffffff; color:#1a2332; }
 
 <!-- HEADER -->
 <div class="hdr">
-  <div class="badge">&#x1F6C2; Visa Management System</div>
-  <h1>H&#x1EC7; Th&#x1ED1;ng Qu&#x1EA3;n L&#xFD;<br><span>H&#x1ED3; S&#x1A0; Visa Ch&#xE2;u &#xC2;u</span></h1>
-  <p>Nh&#x1EAD;p li&#x1EC7;u th&#xF4;ng minh &middot; Xu&#x1EA5;t &#x111;a &#x111;&#x1ECB;nh d&#x1EA1;ng &middot; AI h&#x1ED7; tr&#x1EE3;</p>
+  <div class="badge">🛂 Visa Management System</div>
+  <h1>Quản Lý<br><span>Hồ Sơ Visa Châu Âu</span></h1>
+  <p>OCR ảnh hộ chiếu · Ghi âm AI · Xuất Excel / Word / PDF</p>
 </div>
 
-<!-- LANG -->
+<!-- LANG TOGGLE -->
 <div class="lang-bar">
-  <button class="lang-btn active" id="langVI" onclick="setLang('vi')">&#x1F1FB;&#x1F1F3; Ti&#x1EBF;ng Vi&#x1EC7;t</button>
-  <button class="lang-btn" id="langEN" onclick="setLang('en')">&#x1F1FA;&#x1F1F8; English Output</button>
-</div>
-
-<!-- TELEX STATUS BAR -->
-<div class="telex-bar">
-  <span class="dot"></span>
-  <strong>B&#x1ED9; g&#xF5; Telex &#x111;ang ho&#x1EA1;t &#x111;&#x1ED9;ng</strong>
-  &mdash; G&#xF5; v&#xE0;o b&#x1EA5;t k&#x1EF3; &#xF4; nh&#x1EAD;p n&#xE0;o &#x111;&#x1EC3; vi&#x1EBF;t ti&#x1EBF;ng Vi&#x1EC7;t c&#xF3; d&#x1EA5;u
+  <button class="lang-btn active" id="langVI" onclick="setLang('vi')">🇻🇳 Tiếng Việt</button>
+  <button class="lang-btn" id="langEN" onclick="setLang('en')">🇺🇸 English Output</button>
 </div>
 
 <!-- GUIDE -->
-<div class="card" style="padding:16px 22px;">
+<div class="card" style="padding:14px 18px">
   <div class="guide">
-    <strong>&#x1F4CB; H&#x01B0;&#x1EDB;ng d&#x1EAB;n:</strong>
-    (1) D&#xF9;ng <strong>Gi&#x1ECD;ng n&#xF3;i</strong> ho&#x1EB7;c <strong>OCR</strong> &#x111;&#x1EC3; nh&#x1EAD;p nhanh, ho&#x1EB7;c &#x111;i&#x1EC1;n form th&#x1EE7; c&#xF4;ng v&#x1EDB;i b&#x1ED9; g&#xF5; Telex.
-    (2) Nh&#x1EA5;n <strong>Th&#xEA;m v&#xE0;o danh s&#xE1;ch</strong> &#x111;&#x1EC3; l&#x01B0;u.
-    (3) Ch&#x1ECD;n ng&#xF4;n ng&#x1EEF; xu&#x1EA5;t &#x2192; Nh&#x1EA5;n <strong>Xu&#x1EA5;t Excel / Word / PDF</strong>.
-    Y&#xEA;u c&#x1EA7;u Chrome/Edge &#x111;&#x1EC3; d&#xF9;ng ghi &#xE2;m.
+    <strong>📋 Hướng dẫn:</strong>
+    (1) Dùng <strong>Ghi âm</strong> hoặc <strong>OCR ảnh</strong> để nhập nhanh, hoặc điền <strong>Thủ công</strong>.
+    (2) Nhấn <strong>Thêm vào danh sách</strong> để lưu.
+    (3) Chọn ngôn ngữ xuất → Nhấn <strong>Excel / Word / PDF</strong>.
   </div>
 </div>
 
-<!-- AI INPUT -->
+<!-- AI INPUT CARD -->
 <div class="card">
-  <div class="sec-title">&#x1F916; Nh&#x1EAD;p li&#x1EC7;u AI</div>
+  <div class="sec-title">🤖 Nhập liệu AI</div>
   <div class="tabs">
-    <button class="tab-btn active" onclick="swTab('voice',this)">&#x1F3A4; Gi&#x1ECD;ng n&#xF3;i</button>
-    <button class="tab-btn" onclick="swTab('ocr',this)">&#x1F4F7; OCR / &#x1EA2;nh</button>
-    <button class="tab-btn" onclick="swTab('manual',this)">&#x270F;&#xFE0F; Nh&#x1EAD;p th&#x1EE7; c&#xF4;ng</button>
+    <button class="tab-btn active" onclick="swTab('voice',this)">🎤 Ghi âm</button>
+    <button class="tab-btn" onclick="swTab('ocr',this)">📷 OCR Ảnh</button>
+    <button class="tab-btn" onclick="swTab('manual',this)">✏️ Thủ công</button>
   </div>
 
-  <!-- TAB VOICE -->
+  <!-- TAB: VOICE -->
   <div id="tab-voice" class="tc active">
+    <div id="micNote" class="mic-note">
+      ℹ️ <strong>Cho phép Microphone:</strong> Khi hỏi quyền → nhấn <strong>Cho phép / Allow</strong>.
+      Nếu đã từ chối: vào <strong>Settings trình duyệt → Quyền trang web → Microphone</strong> → bật lại.
+    </div>
     <div class="ai-tools">
       <button class="ai-btn" id="vBtn" onclick="togVoice()">
-        <span class="icon">&#x1F3A4;</span><span id="vBtnTxt">B&#x1EAF;t &#x111;&#x1EA7;u ghi &#xE2;m</span>
+        <span class="icon">🎤</span><span id="vBtnTxt">Bắt đầu ghi âm</span>
       </button>
       <button class="ai-btn" onclick="parseVoice()">
-        <span class="icon">&#x26A1;</span><span>Ph&#xE2;n t&#xED;ch AI &#x2192; &#x110;i&#x1EC1;n form</span>
+        <span class="icon">⚡</span><span>Phân tích → Điền form</span>
       </button>
     </div>
     <div class="vwave" id="vwave"><span></span><span></span><span></span><span></span><span></span></div>
-    <div class="status" id="vStatus">&#x1F4AC; &#x1EA4;n "B&#x1EAF;t &#x111;&#x1EA7;u ghi &#xE2;m" r&#x1ED3;i n&#xF3;i th&#xF4;ng tin b&#x1EB1;ng ti&#x1EBF;ng Vi&#x1EC7;t...</div>
-    <label>V&#x103;n b&#x1EA3;n ghi &#xE2;m / Nh&#x1EAD;p &#x111;&#x1EC3; AI ph&#xE2;n t&#xED;ch:</label>
-    <textarea id="vText" rows="4" style="margin-top:7px;resize:vertical"
+    <div class="status" id="vStatus">💬 Nhấn "Bắt đầu ghi âm" rồi nói thông tin bằng tiếng Việt...</div>
+    <label style="margin-top:8px;display:block">Văn bản ghi âm / Nhập thủ công để AI phân tích:</label>
+    <textarea id="vText" rows="4" style="margin-top:6px;resize:vertical"
       placeholder="VD: Ho ten Nguyen Van An, sinh ngay 15 thang 3 nam 1990, que Ha Noi, nam gioi, CCCD 001090012345..."></textarea>
   </div>
 
-  <!-- TAB OCR -->
+  <!-- TAB: OCR -->
   <div id="tab-ocr" class="tc">
-    <div class="upzone" id="dropZone"
-         onclick="document.getElementById('ocrFile').click()"
-         ondragover="event.preventDefault();this.style.borderColor='#8b7234'"
-         ondragleave="this.style.borderColor='#c9a84c'"
-         ondrop="event.preventDefault();this.style.borderColor='#c9a84c';handleOCRFile(event.dataTransfer.files[0])">
-      <input type="file" id="ocrFile" accept="image/*" style="display:none" onchange="handleOCRFile(this.files[0])">
-      <div class="ui">&#x1F4F7;</div>
-      <p><strong>Click ho&#x1EB7;c k&#xE9;o th&#x1EA3;</strong> &#x1EA3;nh h&#x1ED9; chi&#x1EBF;u / CCCD</p>
-      <p style="margin-top:4px;font-size:12px;color:#a0aec0;">JPG, PNG &middot; H&#x1ED7; tr&#x1EE3; MRZ t&#x1EF1; &#x111;&#x1ED9;ng</p>
+    <!-- Nút chụp / chọn ảnh tách biệt nhau -->
+    <div class="cam-row">
+      <button class="cam-btn" onclick="openCamera()">
+        <span style="font-size:20px">📸</span> Chụp ảnh
+      </button>
+      <button class="cam-btn" onclick="openGallery()">
+        <span style="font-size:20px">🖼️</span> Chọn từ máy
+      </button>
     </div>
-    <img id="ocrImg" alt="Preview">
+    <!-- Hidden inputs: camera vs gallery riêng để tránh lỗi -->
+    <input type="file" id="ocrCamera"  accept="image/*" capture="environment" style="display:none" onchange="handleOCRFile(this.files[0])">
+    <input type="file" id="ocrGallery" accept="image/*" style="display:none"             onchange="handleOCRFile(this.files[0])">
+
+    <img id="ocrImg" alt="Preview ảnh">
     <div class="prog-bar" id="ocrBar"><div class="prog-fill" id="ocrFill"></div></div>
-    <div class="status" id="ocrStatus">&#x1F4F8; T&#x1EA3;i &#x1EA3;nh l&#xEA;n &#x111;&#x1EC3; AI nh&#x1EAD;n di&#x1EC7;n t&#x1EF1; &#x111;&#x1ED9;ng...</div>
+    <div class="status" id="ocrStatus">📸 Chụp ảnh hoặc chọn từ máy để nhận diện tự động...</div>
   </div>
 
-  <!-- TAB MANUAL -->
+  <!-- TAB: MANUAL -->
   <div id="tab-manual" class="tc">
     <div class="telex-hint">
-      <strong>&#x26A1; B&#x1ED9; g&#xF5; Telex &#x111;&#x01B0;&#x1EE3;c t&#xED;ch h&#x1EE3;p s&#x1EB5;n v&#xE0;o t&#x1EA5;t c&#x1EA3; &#xF4; nh&#x1EAD;p:</strong><br>
-      <code>aa</code> &#x2192; &#xE2; &nbsp; <code>aw</code> &#x2192; &#x103; &nbsp; <code>ee</code> &#x2192; &#xEA; &nbsp; <code>oo</code> &#x2192; &#xF4; &nbsp; <code>ow</code> &#x2192; &#x1A1; &nbsp; <code>uw</code>/<code>w</code> &#x2192; &#x1B0;<br>
-      <code>s</code> &#x2192; s&#x1EAF;c (&#xE1;) &nbsp; <code>f</code> &#x2192; huy&#x1EC1;n (&#xE0;) &nbsp; <code>r</code> &#x2192; h&#x1ECF;i (&#x1EA3;) &nbsp; <code>x</code> &#x2192; ng&#xE3; (&#x1EBD;) &nbsp; <code>j</code> &#x2192; n&#x1EB7;ng (&#x1EA1;)<br>
-      <code>dd</code> &#x2192; &#x111; &nbsp; &nbsp; G&#xF5; 2 l&#x1EA7;n &#x111;&#x1EC3; h&#x1EE7;y d&#x1EA5;u. VD: <code>aas</code> &#x2192; &#xE2;s ho&#x1EB7;c <code>aans</code> &#x2192; &#x1EA5;
+      <strong>⚡ Bộ gõ Telex tích hợp sẵn:</strong><br>
+      <code>aa</code>→â &nbsp; <code>aw</code>→ă &nbsp; <code>ee</code>→ê &nbsp; <code>oo</code>→ô &nbsp; <code>ow</code>→ơ &nbsp; <code>uw</code>/<code>w</code>→ư &nbsp; <code>dd</code>→đ<br>
+      <code>s</code>→sắc &nbsp; <code>f</code>→huyền &nbsp; <code>r</code>→hỏi &nbsp; <code>x</code>→ngã &nbsp; <code>j</code>→nặng
     </div>
-    <p style="font-size:13px;color:#718096;font-family:Arial,sans-serif;">&#x26A1; T&#x1EA5;t c&#x1EA3; &#xF4; nh&#x1EAD;p trong form b&#xEA;n d&#x01B0;&#x1EDB;i &#x111;&#x1EC1;u h&#x1ED7; tr&#x1EE3; g&#xF5; Telex v&#xE0; hi&#x1EC3;n th&#x1ECB; &#x111;&#xFA;ng d&#x1EA5;u ti&#x1EBF;ng Vi&#x1EC7;t.</p>
+    <p style="font-size:13px;color:#718096">Tất cả ô nhập bên dưới đều hỗ trợ gõ Telex tiếng Việt.</p>
   </div>
 </div>
 
 <!-- MAIN FORM -->
 <div class="card">
-  <div class="sec-title">&#x1F4DD; Th&#xF4;ng tin h&#x1ED3; s&#x1A0;</div>
+  <div class="sec-title">📝 Thông tin hồ sơ</div>
   <form id="mainForm" onsubmit="return false">
     <div class="fg">
       <div class="fgrp fw">
-        <label>H&#x1ECD; v&#xE0; t&#xEA;n &#x111;&#x1EA7;y &#x111;&#x1EE7; <span class="req">*</span></label>
-        <input type="text" id="fullName" placeholder="VD: Nguyen Van An (go Telex: Nguyeenx Vaawn An)">
+        <label>Họ và tên đầy đủ <span class="req">*</span></label>
+        <input type="text" id="fullName" placeholder="VD: Nguyen Van An">
         <div class="err-msg" id="e-fullName"></div>
       </div>
       <div class="fgrp">
-        <label>H&#x1ECD; (t&#x1EF1; t&#xE1;ch)</label>
+        <label>Họ (tự tách)</label>
         <input type="text" id="ho" placeholder="Nguyen" style="background:rgba(201,168,76,.04)">
       </div>
       <div class="fgrp">
-        <label>T&#xEA;n (t&#x1EF1; t&#xE1;ch)</label>
+        <label>Tên (tự tách)</label>
         <input type="text" id="ten" placeholder="Van An" style="background:rgba(201,168,76,.04)">
       </div>
       <div class="fgrp">
-        <label>Ng&#xE0;y th&#xE1;ng n&#x103;m sinh <span class="req">*</span></label>
+        <label>Ngày tháng năm sinh <span class="req">*</span></label>
         <input type="date" id="ngaySinh">
       </div>
       <div class="fgrp">
-        <label>N&#x1A1;i sinh</label>
+        <label>Nơi sinh</label>
         <input type="text" id="noiSinh" placeholder="VD: Ha Noi">
       </div>
       <div class="fgrp">
-        <label>N&#x01B0;&#x1EDB;c sinh</label>
-        <input type="text" id="nuocSinh" value="Vi&#x1EC7;t Nam">
+        <label>Nước sinh</label>
+        <input type="text" id="nuocSinh" value="Việt Nam">
       </div>
       <div class="fgrp">
-        <label>Gi&#x1EDB;i t&#xED;nh <span class="req">*</span></label>
+        <label>Giới tính <span class="req">*</span></label>
         <select id="gioiTinh">
-          <option value="">-- Ch&#x1ECD;n --</option>
+          <option value="">-- Chọn --</option>
           <option value="Nam">Nam</option>
-          <option value="N&#x1EEF;">N&#x1EEF;</option>
-          <option value="Kh&#xE1;c">Kh&#xE1;c</option>
+          <option value="Nữ">Nữ</option>
+          <option value="Khác">Khác</option>
         </select>
       </div>
       <div class="fgrp">
-        <label>T&#xEC;nh tr&#x1EA1;ng h&#xF4;n nh&#xE2;n</label>
+        <label>Tình trạng hôn nhân</label>
         <select id="honNhan">
-          <option value="">-- Ch&#x1ECD;n --</option>
-          <option value="&#x110;&#x1ED9;c th&#xE2;n">&#x110;&#x1ED9;c th&#xE2;n</option>
-          <option value="&#x110;&#xE3; k&#x1EBF;t h&#xF4;n">&#x110;&#xE3; k&#x1EBF;t h&#xF4;n</option>
-          <option value="Ly h&#xF4;n">Ly h&#xF4;n</option>
-          <option value="G&#xF3;a">G&#xF3;a</option>
+          <option value="">-- Chọn --</option>
+          <option value="Độc thân">Độc thân</option>
+          <option value="Đã kết hôn">Đã kết hôn</option>
+          <option value="Ly hôn">Ly hôn</option>
+          <option value="Góa">Góa</option>
         </select>
       </div>
       <div class="fgrp">
         <label>CCCD / ID <span class="req">*</span></label>
-        <input type="text" id="cccd" placeholder="9 ho&#x1EB7;c 12 s&#x1ED1;" maxlength="12" oninput="valCCCD(this)">
+        <input type="text" id="cccd" placeholder="9 hoặc 12 số" maxlength="12" inputmode="numeric" oninput="valCCCD(this)">
         <div class="err-msg" id="e-cccd"></div>
       </div>
       <div class="fgrp">
-        <label>S&#x1ED1; h&#x1ED9; chi&#x1EBF;u</label>
+        <label>Số hộ chiếu</label>
         <input type="text" id="hoChieu" placeholder="VD: B1234567" oninput="valPassport(this)">
         <div class="err-msg" id="e-hoChieu"></div>
       </div>
       <div class="fgrp">
-        <label>Ng&#xE0;y c&#x1EA5;p h&#x1ED9; chi&#x1EBF;u</label>
+        <label>Ngày cấp hộ chiếu</label>
         <input type="date" id="ngayCap">
       </div>
       <div class="fgrp">
-        <label>Ng&#xE0;y h&#x1EBF;t h&#x1EA1;n h&#x1ED9; chi&#x1EBF;u</label>
+        <label>Ngày hết hạn hộ chiếu</label>
         <input type="date" id="ngayHetHan">
       </div>
       <div class="fgrp fw">
-        <label>&#x110;&#x1ECB;a ch&#x1EC9; th&#x01B0;&#x1EDD;ng tr&#xFA;</label>
-        <input type="text" id="diaChi" placeholder="S&#x1ED1; nh&#xE0;, &#x111;&#x01B0;&#x1EDD;ng, ph&#x01B0;&#x1EDD;ng/x&#xE3;, qu&#x1EAD;n/huy&#x1EC7;n, t&#x1EC9;nh/th&#xE0;nh ph&#x1ED1;">
+        <label>Địa chỉ thường trú</label>
+        <input type="text" id="diaChi" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố">
       </div>
       <div class="fgrp">
         <label>Email</label>
-        <input type="email" id="email" placeholder="example@email.com" oninput="valEmail(this)">
+        <input type="email" id="email" placeholder="example@email.com" inputmode="email" oninput="valEmail(this)">
         <div class="err-msg" id="e-email"></div>
       </div>
       <div class="fgrp">
-        <label>&#x110;i&#x1EC7;n tho&#x1EA1;i</label>
-        <input type="tel" id="dienThoai" placeholder="0912345678">
+        <label>Điện thoại</label>
+        <input type="tel" id="dienThoai" placeholder="0912345678" inputmode="tel">
       </div>
       <div class="fgrp">
-        <label>Ch&#x1EE9;c v&#x1EE5;</label>
+        <label>Chức vụ</label>
         <input type="text" id="chucVu" placeholder="VD: Ky su phan mem">
       </div>
       <div class="fgrp">
-        <label>T&#xEA;n c&#xF4;ng ty</label>
+        <label>Tên công ty</label>
         <input type="text" id="tenCty" placeholder="VD: Cong ty TNHH ABC">
       </div>
       <div class="fgrp">
-        <label>&#x110;i&#x1EC7;n tho&#x1EA1;i c&#xF4;ng ty</label>
-        <input type="tel" id="dtCty" placeholder="028xxxxxxxx">
+        <label>Điện thoại công ty</label>
+        <input type="tel" id="dtCty" placeholder="028xxxxxxxx" inputmode="tel">
       </div>
       <div class="fgrp fw">
-        <label>&#x110;&#x1ECB;a ch&#x1EC9; c&#xF4;ng ty</label>
-        <input type="text" id="dcCty" placeholder="&#x110;&#x1ECB;a ch&#x1EC9; v&#x103;n ph&#xF2;ng / c&#xF4;ng ty">
+        <label>Địa chỉ công ty</label>
+        <input type="text" id="dcCty" placeholder="Địa chỉ văn phòng / công ty">
       </div>
       <div class="fgrp">
-        <label>&#x110;&#xE3; t&#x1EEB;ng &#x111;i ch&#xE2;u &#xC2;u?</label>
+        <label>Đã từng đi châu Âu?</label>
         <select id="didiCA">
-          <option value="Ch&#x01B0;a">Ch&#x01B0;a</option>
-          <option value="R&#x1ED3;i">R&#x1ED3;i</option>
+          <option value="Chưa">Chưa</option>
+          <option value="Rồi">Rồi</option>
         </select>
       </div>
       <div class="fgrp">
-        <label>Ng&#xE0;y c&#x1EA5;p visa</label>
+        <label>Ngày cấp visa</label>
         <input type="date" id="ngayCapVisa">
       </div>
       <div class="fgrp">
-        <label>Ng&#xE0;y h&#x1EBF;t h&#x1EA1;n visa</label>
+        <label>Ngày hết hạn visa</label>
         <input type="date" id="ngayHHVisa">
       </div>
       <div class="fgrp">
-        <label>Ng&#x01B0;&#x1EDD;i chi tr&#x1EA3;</label>
-        <input type="text" id="nguoiCT" placeholder="T&#xEA;n ng&#x01B0;&#x1EDD;i chi tr&#x1EA3;">
+        <label>Người chi trả</label>
+        <input type="text" id="nguoiCT" placeholder="Tên người chi trả">
       </div>
       <div class="fgrp">
-        <label>Ng&#x01B0;&#x1EDD;i b&#x1EA3;o tr&#x1EE3;</label>
-        <input type="text" id="nguoiBT" placeholder="T&#xEA;n ng&#x01B0;&#x1EDD;i b&#x1EA3;o l&#xE3;nh">
+        <label>Người bảo trợ</label>
+        <input type="text" id="nguoiBT" placeholder="Tên người bảo lãnh">
       </div>
     </div>
     <div class="btn-row">
-      <button type="button" class="btn btn-s" onclick="clrForm()">&#x1F5D1;&#xFE0F; X&#xF3;a form</button>
-      <button type="button" class="btn btn-p" onclick="addPerson()">&#x2795; Th&#xEA;m v&#xE0;o danh s&#xE1;ch</button>
+      <button type="button" class="btn btn-s" onclick="clrForm()">🗑️ Xóa form</button>
+      <button type="button" class="btn btn-p" onclick="addPerson()">＋ Thêm vào danh sách</button>
     </div>
   </form>
 </div>
 
-<!-- PREVIEW -->
+<!-- PREVIEW LIST -->
 <div class="card">
-  <div class="sec-title">&#x1F4CB; Danh s&#xE1;ch h&#x1ED3; s&#x1A0;</div>
+  <div class="sec-title">📋 Danh sách hồ sơ</div>
   <div class="sum-bar">
-    <div style="display:flex;align-items:center;gap:8px">
-      T&#x1ED5;ng: <span class="cnt" id="totCnt">0</span> h&#x1ED3; s&#x1A0;
-    </div>
-    <button class="btn btn-s" onclick="clrAll()" style="padding:8px 14px;font-size:12px">&#x1F5D1;&#xFE0F; X&#xF3;a t&#x1EA5;t c&#x1EA3;</button>
+    <div style="display:flex;align-items:center;gap:8px">Tổng: <span class="cnt" id="totCnt">0</span> hồ sơ</div>
+    <button class="btn btn-s" onclick="clrAll()" style="padding:7px 13px;font-size:12px">🗑️ Xóa tất cả</button>
   </div>
   <div class="tbl-wrap" id="tblWrap">
-    <div class="empty"><div class="ei">&#x1F4C2;</div><p>Ch&#x01B0;a c&#xF3; h&#x1ED3; s&#x1A0;. H&#xE3;y th&#xEA;m ng&#x01B0;&#x1EDD;i &#x111;&#x1EA7;u ti&#xEA;n!</p></div>
+    <div class="empty"><div class="ei">📂</div><p>Chưa có hồ sơ. Hãy thêm người đầu tiên!</p></div>
   </div>
 </div>
 
 <!-- EXPORT -->
 <div class="card">
-  <div class="sec-title">&#x1F4E4; Xu&#x1EA5;t file</div>
+  <div class="sec-title">📤 Xuất file</div>
+  <div style="font-size:13px;color:#5a6b7f;margin-bottom:12px">
+    Ngôn ngữ xuất hiện tại: <strong id="expLangLabel" style="color:#c9a84c">Tiếng Việt 🇻🇳</strong>
+  </div>
   <div class="exp-grid">
-    <div class="exp-card" onclick="expExcel()"><div class="ei">&#x1F4CA;</div><div class="el">Excel</div><div class="es">.xlsx &middot; 24 c&#x1ED9;t chu&#x1EA9;n</div></div>
-    <div class="exp-card" onclick="expWord()"><div class="ei">&#x1F4C4;</div><div class="el">Word</div><div class="es">.docx &middot; M&#x1ED7;i ng&#x01B0;&#x1EDD;i 1 trang</div></div>
-    <div class="exp-card" onclick="expPDF()"><div class="ei">&#x1F534;</div><div class="el">PDF</div><div class="es">.pdf &middot; H&#x1ED3; s&#x1A0; &#x111;&#x1EA7;y &#x111;&#x1EE7;</div></div>
-    <div class="exp-card" onclick="expJSON()"><div class="ei">&#x1F4BE;</div><div class="el">Backup JSON</div><div class="es">.json &middot; L&#x01B0;u d&#x1EEF; li&#x1EC7;u</div></div>
+    <div class="exp-card" onclick="expExcel()"><div class="ei">📊</div><div class="el">Excel</div><div class="es">.xlsx · 24 cột</div></div>
+    <div class="exp-card" onclick="expWord()"><div class="ei">📄</div><div class="el">Word</div><div class="es">.docx · Mỗi người 1 trang</div></div>
+    <div class="exp-card" onclick="expPDF()"><div class="ei">🔴</div><div class="el">PDF</div><div class="es">.pdf · Hồ sơ đầy đủ</div></div>
+    <div class="exp-card" onclick="expJSON()"><div class="ei">💾</div><div class="el">Backup JSON</div><div class="es">.json · Lưu dữ liệu</div></div>
   </div>
-  <div class="status" id="expStatus" style="margin-top:14px">
-    &#x2139;&#xFE0F; Ch&#x1ECD;n &#x111;&#x1ECB;nh d&#x1EA1;ng &#x111;&#x1EC3; xu&#x1EA5;t. Ng&#xF4;n ng&#x1EEF;: <strong id="expLang">Ti&#x1EBF;ng Vi&#x1EC7;t</strong>
-  </div>
+  <div class="status" id="expStatus" style="margin-top:12px">ℹ️ Chọn định dạng để xuất.</div>
 </div>
 
 </div><!-- .app -->
 <div class="toast-wrap" id="toastWrap"></div>
-
 <script>
 "use strict";
 
-/* =======================================================
-   TELEX INPUT ENGINE - Bộ gõ Telex tích hợp
-   Áp dụng cho tất cả input[type=text], textarea
-   ======================================================= */
+/* ============================================================
+   TELEX ENGINE
+   ============================================================ */
+const TELEX_VOWELS={'a':'a','e':'e','i':'i','o':'o','u':'u','y':'y','aa':'\u00e2','ee':'\u00ea','oo':'\u00f4','AA':'\u00c2','EE':'\u00ca','OO':'\u00d4','aw':'\u0103','ow':'\u01a1','uw':'\u01b0','w':'\u01b0','AW':'\u0102','OW':'\u01a0','UW':'\u01af','W':'\u01af','dd':'\u0111','DD':'\u0110'};
+const TONES={'s':1,'f':2,'r':3,'x':4,'j':5};
+const TONE_MAP={'a':['a','\u00e1','\u00e0','\u1ea3','\u00e3','\u1ea1'],'\u00e2':['\u00e2','\u1ea5','\u1ea7','\u1ea9','\u1eab','\u1ead'],'\u0103':['\u0103','\u1eaf','\u1eb1','\u1eb3','\u1eb5','\u1eb7'],'e':['e','\u00e9','\u00e8','\u1ebb','\u1ebd','\u1eb9'],'\u00ea':['\u00ea','\u1ebf','\u1ec1','\u1ec3','\u1ec5','\u1ec7'],'i':['i','\u00ed','\u00ec','\u1ec9','\u0129','\u1ecb'],'o':['o','\u00f3','\u00f2','\u1ecf','\u00f5','\u1ecd'],'\u00f4':['\u00f4','\u1ed1','\u1ed3','\u1ed5','\u1ed7','\u1ed9'],'\u01a1':['\u01a1','\u1edb','\u1edd','\u1edf','\u1ee1','\u1ee3'],'u':['u','\u00fa','\u00f9','\u1ee7','\u0169','\u1ee5'],'\u01b0':['\u01b0','\u1ee9','\u1eeb','\u1eed','\u1eef','\u1ef1'],'y':['y','\u00fd','\u1ef3','\u1ef7','\u1ef9','\u1ef5'],'A':['A','\u00c1','\u00c0','\u1ea2','\u00c3','\u1ea0'],'\u00c2':['\u00c2','\u1ea4','\u1ea6','\u1ea8','\u1eaa','\u1eac'],'\u0102':['\u0102','\u1eae','\u1eb0','\u1eb2','\u1eb4','\u1eb6'],'E':['E','\u00c9','\u00c8','\u1eba','\u1ebc','\u1eb8'],'\u00ca':['\u00ca','\u1ebe','\u1ec0','\u1ec2','\u1ec4','\u1ec6'],'I':['I','\u00cd','\u00cc','\u1ec8','\u0128','\u1eca'],'O':['O','\u00d3','\u00d2','\u1ece','\u00d5','\u1ecc'],'\u00d4':['\u00d4','\u1ed0','\u1ed2','\u1ed4','\u1ed6','\u1ed8'],'\u01a0':['\u01a0','\u1eda','\u1edc','\u1ede','\u1ee0','\u1ee2'],'U':['U','\u00da','\u00d9','\u1ee6','\u0168','\u1ee4'],'\u01af':['\u01af','\u1ee8','\u1eea','\u1eec','\u1eee','\u1ef0'],'Y':['Y','\u00dd','\u1ef2','\u1ef6','\u1ef8','\u1ef4']};
+function getBaseVowel(ch){for(const[b,a]of Object.entries(TONE_MAP)){if(a.includes(ch))return b;}return ch;}
+function getCurrentTone(ch){for(const a of Object.values(TONE_MAP)){const i=a.indexOf(ch);if(i!==-1)return i;}return 0;}
+class TelexEngine{constructor(el){this.el=el;this.buf='';el.addEventListener('keydown',e=>this.onKeyDown(e));el.addEventListener('blur',()=>{this.buf='';});el.addEventListener('input',()=>{if(!this._typing)this.buf='';this._typing=false;});}
+onKeyDown(e){if(e.ctrlKey||e.metaKey||e.altKey)return;if(e.key.length!==1){this.buf='';return;}const ch=e.key;const el=this.el;const start=el.selectionStart,end=el.selectionEnd;if(start!==end){this.buf='';return;}const val=el.value;const before=val.slice(0,start);const after=val.slice(end);const result=this.applyTelex(before,ch);if(result!==null){e.preventDefault();this._typing=true;el.value=result.text+after;const pos=result.text.length;el.setSelectionRange(pos,pos);el.dispatchEvent(new Event('input',{bubbles:true}));this.buf=result.buf;if(el.id==='fullName')splitName(el.value);}else{this.buf='';}}
+applyTelex(before,ch){const lch=ch.toLowerCase();const lastChar=before.length>0?before[before.length-1]:'';const lastBase=getBaseVowel(lastChar);const lastLow=lastBase.toLowerCase();if(lch==='d'){if(lastChar==='d')return{text:before.slice(0,-1)+'\u0111',buf:''};if(lastChar==='D')return{text:before.slice(0,-1)+'\u0110',buf:''};return null;}if(lch in TONES){const toneIdx=TONES[lch];const pos=this.findVowelPos(before);if(pos!==-1){const vowelChar=before[pos];const baseV=getBaseVowel(vowelChar);const curTone=getCurrentTone(vowelChar);if(TONE_MAP[baseV]){let newChar;if(curTone===toneIdx){newChar=TONE_MAP[baseV][0];}else{newChar=TONE_MAP[baseV][toneIdx]||vowelChar;}return{text:before.slice(0,pos)+newChar+before.slice(pos+1),buf:''};}}return null;}if(['a','e','o'].includes(lch)){if(lastLow===lch&&lastBase===lastChar.toLowerCase()){const capKey=lch==='a'?'aa':lch==='e'?'ee':'oo';const UCkey=capKey.toUpperCase();const mapped=lastChar===lastChar.toLowerCase()?TELEX_VOWELS[capKey]:TELEX_VOWELS[UCkey];if(mapped)return{text:before.slice(0,-1)+mapped,buf:''};}}if(lch==='w'){if(lastLow==='u'){const mapped=lastChar==='u'?'\u01b0':'\u01af';return{text:before.slice(0,-1)+mapped,buf:''};}else if(lastLow==='o'){const mapped=lastChar==='o'?'\u01a1':'\u01a0';return{text:before.slice(0,-1)+mapped,buf:''};}else if(lastLow==='a'){const mapped=lastChar==='a'?'\u0103':'\u0102';return{text:before.slice(0,-1)+mapped,buf:''};} else{return{text:before+'\u01b0',buf:''};}}return null;}
+findVowelPos(str){const vowels='a\u0103\u00e2e\u00eaio\u00f4\u01a1u\u01b0yA\u0102\u00c2E\u00caIO\u00d4\u01a0U\u01afY\u00e0\u00e1\u1ea3\u00e3\u1ea1\u1ea7\u1ea5\u1ea9\u1eab\u1ead\u1eb1\u1eaf\u1eb3\u1eb5\u1eb7\u00e8\u00e9\u1ebb\u1ebd\u1eb9\u1ec1\u1ebf\u1ec3\u1ec5\u1ec7\u00ec\u00ed\u1ec9\u0129\u1ecb\u00f2\u00f3\u1ecf\u00f5\u1ecd\u1ed3\u1ed1\u1ed5\u1ed7\u1ed9\u1edd\u1edb\u1edf\u1ee1\u1ee3\u00f9\u00fa\u1ee7\u0169\u1ee5\u1eeb\u1ee9\u1eed\u1eef\u1ef1\u1ef3\u00fd\u1ef7\u1ef9\u1ef5';for(let i=str.length-1;i>=Math.max(0,str.length-5);i--){if(vowels.includes(str[i]))return i;}return -1;}}
+function initTelex(){document.querySelectorAll('input[type=text],input[type=tel],textarea').forEach(el=>{if(el.id==='cccd')return;new TelexEngine(el);});}
 
-// Bảng chuyển đổi Telex
-const TELEX_VOWELS = {
-  // Âm chính
-  'a': 'a', 'e': 'e', 'i': 'i', 'o': 'o', 'u': 'u', 'y': 'y',
-  // Mũ
-  'aa': '\u00e2', 'ee': '\u00ea', 'oo': '\u00f4',
-  'AA': '\u00c2', 'EE': '\u00ca', 'OO': '\u00d4',
-  // Móc
-  'aw': '\u0103', 'ow': '\u01a1', 'uw': '\u01b0', 'w': '\u01b0',
-  'AW': '\u0102', 'OW': '\u01a0', 'UW': '\u01af', 'W': '\u01af',
-  // Đê
-  'dd': '\u0111', 'DD': '\u0110',
-};
+/* ============================================================
+   DATA & STATE
+   ============================================================ */
+let people=[], stt=1, lang='vi';
+let recObj=null, isRec=false;
 
-// Bảng dấu thanh (tone marks)
-const TONES = { 's': 1, 'f': 2, 'r': 3, 'x': 4, 'j': 5 };
-// 0=flat, 1=sac, 2=huyen, 3=hoi, 4=nga, 5=nang
+const COL_VI=['stt','Họ','Tên','ngày tháng năm sinh','nơi sinh','nước sinh','Giới tính','tình trạng hôn nhân','ID','Số hộ chiếu','Ngày cấp','Ngày hết hạn','Địa chỉ thường trú','email','Điện thoại','Chức vụ','Tên công ty','Số điện thoại công ty','Địa chỉ công ty','Đã từng đi châu âu chưa?','Ngày cấp visa','ngày hết hạn visa','người chi trả','Người bảo trợ'];
+const COL_EN=['No.','Last Name','First Name','Date of Birth','Place of Birth','Country of Birth','Gender','Marital Status','ID Number','Passport Number','Issue Date','Expiry Date','Permanent Address','Email','Phone','Occupation','Company Name','Company Phone','Company Address','Previously visited Europe?','Visa Issue Date','Visa Expiry Date','Sponsor','Guarantor'];
+const TRANS={'Nam':'Male','Nữ':'Female','Khác':'Other','Độc thân':'Single','Đã kết hôn':'Married','Ly hôn':'Divorced','Góa':'Widowed','Chưa':'No','Rồi':'Yes','Việt Nam':'Vietnam'};
 
-// Bảng ký tự có dấu cho từng âm + thanh
-const TONE_MAP = {
-  'a':  ['a','\u00e1','\u00e0','\u1ea3','\u00e3','\u1ea1'],
-  '\u00e2': ['\u00e2','\u1ea5','\u1ea7','\u1ea9','\u1eab','\u1ead'], // â
-  '\u0103': ['\u0103','\u1eaf','\u1eb1','\u1eb3','\u1eb5','\u1eb7'], // ă
-  'e':  ['e','\u00e9','\u00e8','\u1ebb','\u1ebd','\u1eb9'],
-  '\u00ea': ['\u00ea','\u1ebf','\u1ec1','\u1ec3','\u1ec5','\u1ec7'], // ê
-  'i':  ['i','\u00ed','\u00ec','\u1ec9','\u0129','\u1ecb'],
-  'o':  ['o','\u00f3','\u00f2','\u1ecf','\u00f5','\u1ecd'],
-  '\u00f4': ['\u00f4','\u1ed1','\u1ed3','\u1ed5','\u1ed7','\u1ed9'], // ô
-  '\u01a1': ['\u01a1','\u1edb','\u1edd','\u1edf','\u1ee1','\u1ee3'], // ơ
-  'u':  ['u','\u00fa','\u00f9','\u1ee7','\u0169','\u1ee5'],
-  '\u01b0': ['\u01b0','\u1ee9','\u1eeb','\u1eed','\u1eef','\u1ef1'], // ư
-  'y':  ['y','\u00fd','\u1ef3','\u1ef7','\u1ef9','\u1ef5'],
-  // Uppercase
-  'A':  ['A','\u00c1','\u00c0','\u1ea2','\u00c3','\u1ea0'],
-  '\u00c2': ['\u00c2','\u1ea4','\u1ea6','\u1ea8','\u1eaa','\u1eac'],
-  '\u0102': ['\u0102','\u1eae','\u1eb0','\u1eb2','\u1eb4','\u1eb6'],
-  'E':  ['E','\u00c9','\u00c8','\u1eba','\u1ebc','\u1eb8'],
-  '\u00ca': ['\u00ca','\u1ebe','\u1ec0','\u1ec2','\u1ec4','\u1ec6'],
-  'I':  ['I','\u00cd','\u00cc','\u1ec8','\u0128','\u1eca'],
-  'O':  ['O','\u00d3','\u00d2','\u1ece','\u00d5','\u1ecc'],
-  '\u00d4': ['\u00d4','\u1ed0','\u1ed2','\u1ed4','\u1ed6','\u1ed8'],
-  '\u01a0': ['\u01a0','\u1eda','\u1edc','\u1ede','\u1ee0','\u1ee2'],
-  'U':  ['U','\u00da','\u00d9','\u1ee6','\u0168','\u1ee4'],
-  '\u01af': ['\u01af','\u1ee8','\u1eea','\u1eec','\u1eee','\u1ef0'],
-  'Y':  ['Y','\u00dd','\u1ef2','\u1ef6','\u1ef8','\u1ef4'],
-};
-
-// Lấy base vowel (không dấu thanh)
-function getBaseVowel(ch) {
-  for (const [base, arr] of Object.entries(TONE_MAP)) {
-    if (arr.includes(ch)) return base;
-  }
-  return ch;
-}
-
-// Lấy tone hiện tại của ký tự
-function getCurrentTone(ch) {
-  for (const arr of Object.values(TONE_MAP)) {
-    const idx = arr.indexOf(ch);
-    if (idx !== -1) return idx;
-  }
-  return 0;
-}
-
-/* Bộ xử lý Telex state cho mỗi input */
-class TelexEngine {
-  constructor(el) {
-    this.el = el;
-    this.buf = ''; // buffer hiện tại
-    el.addEventListener('keydown', e => this.onKeyDown(e));
-    el.addEventListener('blur', () => { this.buf = ''; });
-    el.addEventListener('input', () => {
-      // Khi paste hoặc sửa bên ngoài, reset buf
-      if (!this._typing) this.buf = '';
-      this._typing = false;
-    });
-  }
-
-  onKeyDown(e) {
-    // Bỏ qua phím điều khiển
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
-    if (e.key.length !== 1) { this.buf = ''; return; }
-
-    const ch = e.key;
-    const el = this.el;
-
-    // Chỉ xử lý input text/textarea
-    const start = el.selectionStart, end = el.selectionEnd;
-    if (start !== end) { this.buf = ''; return; } // có selection, không xử lý
-
-    const val = el.value;
-    const before = val.slice(0, start);
-    const after = val.slice(end);
-
-    // Thử áp dụng Telex
-    const result = this.applyTelex(before, ch);
-    if (result !== null) {
-      e.preventDefault();
-      this._typing = true;
-      el.value = result.text + after;
-      const pos = result.text.length;
-      el.setSelectionRange(pos, pos);
-      el.dispatchEvent(new Event('input', { bubbles: true }));
-      this.buf = result.buf;
-      // Kích hoạt splitName nếu là fullName
-      if (el.id === 'fullName') splitName(el.value);
-    } else {
-      this.buf = '';
-    }
-  }
-
-  applyTelex(before, ch) {
-    const lch = ch.toLowerCase();
-    const lastChar = before.length > 0 ? before[before.length - 1] : '';
-    const lastBase = getBaseVowel(lastChar);
-    const lastLow = lastBase.toLowerCase();
-
-    // ========== Xử lý dd → đ ==========
-    if (lch === 'd') {
-      if (lastChar === 'd') {
-        return { text: before.slice(0, -1) + '\u0111', buf: '' };
-      } else if (lastChar === 'D') {
-        return { text: before.slice(0, -1) + '\u0110', buf: '' };
-      }
-      return null; // để browser xử lý bình thường
-    }
-
-    // ========== Dấu thanh ==========
-    if (lch in TONES) {
-      const toneIdx = TONES[lch];
-      // Tìm nguyên âm gần nhất trong before để đặt dấu
-      const pos = this.findVowelPos(before);
-      if (pos !== -1) {
-        const vowelChar = before[pos];
-        const baseV = getBaseVowel(vowelChar);
-        const curTone = getCurrentTone(vowelChar);
-        if (TONE_MAP[baseV]) {
-          let newChar;
-          if (curTone === toneIdx) {
-            // Bấm lại cùng dấu → xóa dấu (trở về tone 0)
-            newChar = TONE_MAP[baseV][0];
-          } else {
-            newChar = TONE_MAP[baseV][toneIdx] || vowelChar;
-          }
-          return { text: before.slice(0, pos) + newChar + before.slice(pos + 1), buf: '' };
-        }
-      }
-      return null;
-    }
-
-    // ========== aa → â, ee → ê, oo → ô ==========
-    if (['a','e','o'].includes(lch)) {
-      if (lastLow === lch && lastBase === lastChar.toLowerCase()) {
-        // Hai lần cùng nguyên âm → mũ
-        const capKey = lch === 'a' ? 'aa' : lch === 'e' ? 'ee' : 'oo';
-        const UCkey = capKey.toUpperCase();
-        const mapped = lastChar === lastChar.toLowerCase() ? TELEX_VOWELS[capKey] : TELEX_VOWELS[UCkey];
-        if (mapped) return { text: before.slice(0, -1) + mapped, buf: '' };
-      }
-      // Nếu ký tự cuối là nguyên âm mũ/có thanh cùng loại → thay bằng nguyên âm thường
-      if (lastBase === lch || lastBase === lch.toUpperCase()) {
-        const curTone = getCurrentTone(lastChar);
-        if (curTone !== 0 && getBaseVowel(lastChar).toLowerCase() === lch) {
-          // Đã có thanh nhưng thêm nguyên âm mới → bình thường
-        }
-      }
-      return null;
-    }
-
-    // ========== aw → ă, ow → ơ, uw/w → ư ==========
-    if (lch === 'w') {
-      // Xem ký tự trước
-      if (lastLow === 'u') {
-        const mapped = lastChar === 'u' ? '\u01b0' : '\u01af'; // ư / Ư
-        return { text: before.slice(0, -1) + mapped, buf: '' };
-      } else if (lastLow === 'o') {
-        const mapped = lastChar === 'o' ? '\u01a1' : '\u01a0'; // ơ / Ơ
-        return { text: before.slice(0, -1) + mapped, buf: '' };
-      } else if (lastLow === 'a') {
-        const mapped = lastChar === 'a' ? '\u0103' : '\u0102'; // ă / Ă
-        return { text: before.slice(0, -1) + mapped, buf: '' };
-      } else {
-        // Standalone w → ư
-        return { text: before + '\u01b0', buf: '' };
-      }
-    }
-
-    if (lch === 'a' && before.length > 0 && before[before.length-1].toLowerCase() === 'a') {
-      // handled above in aa case
-    }
-
-    return null;
-  }
-
-  // Tìm vị trí nguyên âm cuối cùng trong chuỗi
-  findVowelPos(str) {
-    const vowels = 'aăâeêioôơuưyAĂÂEÊIOÔƠUƯY' +
-      'àáảãạầấẩẫậằắẳẵặèéẻẽẹềếểễệìíỉĩịòóỏõọồốổỗộờớởỡợùúủũụừứửữựỳýỷỹỵ' +
-      'ÀÁẢÃẠẦẤẨẪẬẰẮẲẴẶÈÉẺẼẸỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌỒỐỔỖỘỜỚỞỠỢÙÚỦŨỤỪỨỬỮỰỲÝỶỸỴ';
-    for (let i = str.length - 1; i >= Math.max(0, str.length - 5); i--) {
-      if (vowels.includes(str[i])) return i;
-    }
-    return -1;
-  }
-}
-
-// Khởi tạo Telex cho tất cả input text và textarea
-function initTelex() {
-  document.querySelectorAll('input[type=text], input[type=tel], textarea').forEach(el => {
-    // Bỏ qua ô chỉ nhập số
-    if (el.id === 'cccd') return;
-    new TelexEngine(el);
-  });
-}
-
-/* =======================================================
-   DATA STORE
-   ======================================================= */
-let people = [], stt = 1, lang = 'vi';
-let recObj = null, isRec = false;
-
-// 24 cột đúng thứ tự
-const COL_VI = [
-  'stt','Họ','Tên','ngày tháng năm sinh','nơi sinh','nước sinh',
-  'Giới tính','tình trạng hôn nhân','ID','Số hộ chiếu',
-  'Ngày cấp','Ngày hết hạn','Địa chỉ thường trú','email','Điện thoại',
-  'Chức vụ','Tên công ty','Số điện thoại công ty','Địa chỉ công ty',
-  'Đã từng đi châu âu chưa?','Ngày cấp visa','ngày hết hạn visa',
-  'người chi trả','Người bảo trợ'
-];
-const COL_EN = [
-  'No.','Last Name','First Name','Date of Birth','Place of Birth','Country of Birth',
-  'Gender','Marital Status','ID Number','Passport Number',
-  'Issue Date','Expiry Date','Permanent Address','Email','Phone',
-  'Occupation','Company Name','Company Phone','Company Address',
-  'Previously visited Europe?','Visa Issue Date','Visa Expiry Date',
-  'Sponsor','Guarantor'
-];
-const TRANS = {
-  'Nam':'Male','Nữ':'Female','Khác':'Other',
-  'Độc thân':'Single','Đã kết hôn':'Married','Ly hôn':'Divorced','Góa':'Widowed',
-  'Chưa':'No','Rồi':'Yes','Việt Nam':'Vietnam'
-};
-
-/* =======================================================
-   TABS
-   ======================================================= */
-function swTab(name, btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+/* ============================================================
+   TABS & LANG
+   ============================================================ */
+function swTab(name,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.tc').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+function setLang(l){
+  lang=l;
+  document.getElementById('langVI').classList.toggle('active',l==='vi');
+  document.getElementById('langEN').classList.toggle('active',l==='en');
+  const label=document.getElementById('expLangLabel');
+  label.textContent=l==='vi'?'Tiếng Việt 🇻🇳':'English 🇺🇸';
+  toast(l==='vi'?'🇻🇳 Xuất Tiếng Việt':'🇺🇸 Export in English','ok');
 }
 
-/* =======================================================
-   LANGUAGE
-   ======================================================= */
-function setLang(l) {
-  lang = l;
-  document.getElementById('langVI').classList.toggle('active', l === 'vi');
-  document.getElementById('langEN').classList.toggle('active', l === 'en');
-  document.getElementById('expLang').textContent = l === 'vi' ? 'Tiếng Việt' : 'English';
-  toast(l === 'vi' ? '🇻🇳 Xuất tiếng Việt' : '🇺🇸 Will export in English', 'ok');
+/* ============================================================
+   NAME SPLIT
+   ============================================================ */
+function splitName(v){
+  const p=v.trim().split(/\s+/);
+  document.getElementById('ho').value=p.length>=2?p[0]:v;
+  document.getElementById('ten').value=p.length>=2?p.slice(1).join(' '):'';
 }
 
-/* =======================================================
-   NAME SPLIT: Họ | Tên đệm + Tên
-   ======================================================= */
-function splitName(v) {
-  const p = v.trim().split(/\s+/);
-  document.getElementById('ho').value = p.length >= 2 ? p[0] : v;
-  document.getElementById('ten').value = p.length >= 2 ? p.slice(1).join(' ') : '';
-}
-
-/* =======================================================
+/* ============================================================
    VALIDATION
-   ======================================================= */
-function valCCCD(el) {
-  const v = el.value.replace(/\D/g, ''); el.value = v;
-  const e = document.getElementById('e-cccd');
-  if (v && v.length !== 9 && v.length !== 12) {
-    el.classList.add('input-err'); e.textContent = 'Phải 9 hoặc 12 số';
-  } else { el.classList.remove('input-err'); e.textContent = ''; }
-}
-function valPassport(el) {
-  const e = document.getElementById('e-hoChieu');
-  if (el.value && !/^[A-Z]{1,2}\d{6,8}$/i.test(el.value.trim())) {
-    el.classList.add('input-err'); e.textContent = 'VD: B1234567';
-  } else { el.classList.remove('input-err'); e.textContent = ''; }
-}
-function valEmail(el) {
-  const e = document.getElementById('e-email');
-  if (el.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value)) {
-    el.classList.add('input-err'); e.textContent = 'Email không hợp lệ';
-  } else { el.classList.remove('input-err'); e.textContent = ''; }
-}
+   ============================================================ */
+function valCCCD(el){const v=el.value.replace(/\D/g,'');el.value=v;const e=document.getElementById('e-cccd');if(v&&v.length!==9&&v.length!==12){el.classList.add('input-err');e.textContent='Phải 9 hoặc 12 số';}else{el.classList.remove('input-err');e.textContent='';}}
+function valPassport(el){const e=document.getElementById('e-hoChieu');if(el.value&&!/^[A-Z]{1,2}\d{6,8}$/i.test(el.value.trim())){el.classList.add('input-err');e.textContent='VD: B1234567';}else{el.classList.remove('input-err');e.textContent='';}}
+function valEmail(el){const e=document.getElementById('e-email');if(el.value&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value)){el.classList.add('input-err');e.textContent='Email không hợp lệ';}else{el.classList.remove('input-err');e.textContent='';}}
 
-/* =======================================================
-   CLEAR FORM
-   ======================================================= */
-function clrForm() {
+/* ============================================================
+   FORM OPERATIONS
+   ============================================================ */
+function clrForm(){
   document.getElementById('mainForm').reset();
-  ['fullName','ho','ten'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('nuocSinh').value = 'Việt Nam';
-  document.getElementById('didiCA').value = 'Chưa';
-  document.querySelectorAll('.input-err').forEach(el => el.classList.remove('input-err'));
-  document.querySelectorAll('.err-msg').forEach(el => el.textContent = '');
+  ['fullName','ho','ten'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('nuocSinh').value='Việt Nam';
+  document.getElementById('didiCA').value='Chưa';
+  document.querySelectorAll('.input-err').forEach(el=>el.classList.remove('input-err'));
+  document.querySelectorAll('.err-msg').forEach(el=>el.textContent='');
 }
-
-/* =======================================================
-   GET FORM DATA
-   ======================================================= */
-function getForm() {
-  let ho = document.getElementById('ho').value.trim();
-  let ten = document.getElementById('ten').value.trim();
-  const fn = document.getElementById('fullName').value.trim();
-  if (!ho && fn) { const p = fn.split(/\s+/); ho = p[0]; ten = p.slice(1).join(' '); }
-  return {
-    stt, ho, ten,
-    ngaySinh: document.getElementById('ngaySinh').value,
-    noiSinh:  document.getElementById('noiSinh').value.trim(),
-    nuocSinh: document.getElementById('nuocSinh').value.trim() || 'Việt Nam',
-    gioiTinh: document.getElementById('gioiTinh').value,
-    honNhan:  document.getElementById('honNhan').value,
-    cccd:     document.getElementById('cccd').value.trim(),
-    hoChieu:  document.getElementById('hoChieu').value.trim(),
-    ngayCap:  document.getElementById('ngayCap').value,
-    ngayHetHan: document.getElementById('ngayHetHan').value,
-    diaChi:   document.getElementById('diaChi').value.trim(),
-    email:    document.getElementById('email').value.trim(),
+function getForm(){
+  let ho=document.getElementById('ho').value.trim();
+  let ten=document.getElementById('ten').value.trim();
+  const fn=document.getElementById('fullName').value.trim();
+  if(!ho&&fn){const p=fn.split(/\s+/);ho=p[0];ten=p.slice(1).join(' ');}
+  return{stt,ho,ten,
+    ngaySinh:document.getElementById('ngaySinh').value,
+    noiSinh:document.getElementById('noiSinh').value.trim(),
+    nuocSinh:document.getElementById('nuocSinh').value.trim()||'Việt Nam',
+    gioiTinh:document.getElementById('gioiTinh').value,
+    honNhan:document.getElementById('honNhan').value,
+    cccd:document.getElementById('cccd').value.trim(),
+    hoChieu:document.getElementById('hoChieu').value.trim(),
+    ngayCap:document.getElementById('ngayCap').value,
+    ngayHetHan:document.getElementById('ngayHetHan').value,
+    diaChi:document.getElementById('diaChi').value.trim(),
+    email:document.getElementById('email').value.trim(),
     dienThoai:document.getElementById('dienThoai').value.trim(),
-    chucVu:   document.getElementById('chucVu').value.trim(),
-    tenCty:   document.getElementById('tenCty').value.trim(),
-    dtCty:    document.getElementById('dtCty').value.trim(),
-    dcCty:    document.getElementById('dcCty').value.trim(),
-    didiCA:   document.getElementById('didiCA').value,
-    ngayCapVisa: document.getElementById('ngayCapVisa').value,
-    ngayHHVisa:  document.getElementById('ngayHHVisa').value,
-    nguoiCT:  document.getElementById('nguoiCT').value.trim(),
-    nguoiBT:  document.getElementById('nguoiBT').value.trim(),
-  };
+    chucVu:document.getElementById('chucVu').value.trim(),
+    tenCty:document.getElementById('tenCty').value.trim(),
+    dtCty:document.getElementById('dtCty').value.trim(),
+    dcCty:document.getElementById('dcCty').value.trim(),
+    didiCA:document.getElementById('didiCA').value,
+    ngayCapVisa:document.getElementById('ngayCapVisa').value,
+    ngayHHVisa:document.getElementById('ngayHHVisa').value,
+    nguoiCT:document.getElementById('nguoiCT').value.trim(),
+    nguoiBT:document.getElementById('nguoiBT').value.trim()};
 }
-
-/* =======================================================
-   ADD PERSON
-   ======================================================= */
-function addPerson() {
-  const d = getForm();
-  if (!d.ho && !d.ten) {
-    document.getElementById('e-fullName').textContent = 'Vui lòng nhập họ tên!';
-    toast('⚠️ Nhập họ tên!', 'err'); return;
-  }
-  document.getElementById('e-fullName').textContent = '';
-  people.push(d); stt++;
-  render(); clrForm(); saveData();
-  toast('✅ Đã thêm: ' + [d.ho, d.ten].filter(Boolean).join(' '), 'ok');
+function addPerson(){
+  const d=getForm();
+  if(!d.ho&&!d.ten){document.getElementById('e-fullName').textContent='Vui lòng nhập họ tên!';toast('⚠️ Nhập họ tên!','err');return;}
+  document.getElementById('e-fullName').textContent='';
+  people.push(d);stt++;render();clrForm();saveData();
+  toast('✅ Đã thêm: '+[d.ho,d.ten].filter(Boolean).join(' '),'ok');
 }
+function delPerson(i){people.splice(i,1);people.forEach((p,idx)=>p.stt=idx+1);stt=people.length+1;render();saveData();toast('🗑️ Đã xóa','err');}
+function clrAll(){if(!confirm('Xóa toàn bộ danh sách?'))return;people=[];stt=1;render();saveData();toast('🗑️ Đã xóa tất cả','err');}
 
-function delPerson(i) {
-  people.splice(i, 1);
-  people.forEach((p, idx) => p.stt = idx + 1);
-  stt = people.length + 1;
-  render(); saveData(); toast('🗑️ Đã xóa', 'err');
+/* ============================================================
+   RENDER TABLE
+   ============================================================ */
+function render(){
+  document.getElementById('totCnt').textContent=people.length;
+  const w=document.getElementById('tblWrap');
+  if(!people.length){w.innerHTML='<div class="empty"><div class="ei">📂</div><p>Chưa có hồ sơ nào!</p></div>';return;}
+  const heads=['STT','Họ','Tên','Ngày sinh','CCCD','Hộ chiếu','Email','ĐT','Chức vụ','Xóa'];
+  let h='<table class="ptbl"><thead><tr>'+heads.map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>';
+  people.forEach((p,i)=>{h+=`<tr><td>${p.stt}</td><td>${esc(p.ho)}</td><td>${esc(p.ten)}</td><td>${fmtD(p.ngaySinh)}</td><td>${esc(p.cccd)||'—'}</td><td>${esc(p.hoChieu)||'—'}</td><td>${esc(p.email)||'—'}</td><td>${esc(p.dienThoai)||'—'}</td><td>${esc(p.chucVu)||'—'}</td><td><button class="btn btn-d" onclick="delPerson(${i})">🗑️</button></td></tr>`;});
+  w.innerHTML=h+'</tbody></table>';
 }
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtD(s,en){if(!s)return'';try{const d=new Date(s);return isNaN(d)?s:(en?d.toLocaleDateString('en-GB'):d.toLocaleDateString('vi-VN'));}catch{return s;}}
+function noTone(s){if(!s)return'';return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\u0111/g,'d').replace(/\u0110/g,'D');}
+function buildRow(p){const en=(lang==='en');const nm=en?noTone:x=>x;const fd=s=>fmtD(s,en);const tr=v=>en?(TRANS[v]||v):v;return[p.stt,nm(p.ho),nm(p.ten),fd(p.ngaySinh),nm(p.noiSinh),nm(p.nuocSinh),tr(p.gioiTinh),tr(p.honNhan),p.cccd,p.hoChieu,fd(p.ngayCap),fd(p.ngayHetHan),nm(p.diaChi),p.email,p.dienThoai,nm(p.chucVu),nm(p.tenCty),p.dtCty,nm(p.dcCty),tr(p.didiCA),fd(p.ngayCapVisa),fd(p.ngayHHVisa),nm(p.nguoiCT),nm(p.nguoiBT)];}
 
-function clrAll() {
-  if (!confirm('Xóa toàn bộ danh sách?')) return;
-  people = []; stt = 1; render(); saveData(); toast('🗑️ Đã xóa tất cả', 'err');
-}
+/* ============================================================
+   TOAST & STATUS HELPERS
+   ============================================================ */
+function toast(msg,type){const w=document.getElementById('toastWrap');const t=document.createElement('div');t.className='toast'+(type==='err'?' err':type==='ok'?' ok':'');t.textContent=msg;w.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},3000);}
+function setSt(id,html,type){const el=document.getElementById(id);el.className='status'+(type?' '+type:'');el.innerHTML=html;}
+function setExpSt(msg,type){const el=document.getElementById('expStatus');el.className='status'+(type?' '+type:'');el.innerHTML=msg;}
+function dlBlob(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);}
 
-/* =======================================================
-   RENDER TABLE PREVIEW
-   ======================================================= */
-function render() {
-  document.getElementById('totCnt').textContent = people.length;
-  const w = document.getElementById('tblWrap');
-  if (!people.length) {
-    w.innerHTML = '<div class="empty"><div class="ei">📂</div><p>Chưa có hồ sơ nào!</p></div>'; return;
-  }
-  const heads = ['STT','Họ','Tên','Ngày sinh','CCCD','Hộ chiếu','Email','ĐT','Chức vụ','Xóa'];
-  let h = '<table class="ptbl"><thead><tr>' + heads.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
-  people.forEach((p, i) => {
-    h += `<tr>
-      <td>${p.stt}</td><td>${esc(p.ho)}</td><td>${esc(p.ten)}</td>
-      <td>${fmtD(p.ngaySinh)}</td><td>${esc(p.cccd)||'—'}</td>
-      <td>${esc(p.hoChieu)||'—'}</td><td>${esc(p.email)||'—'}</td>
-      <td>${esc(p.dienThoai)||'—'}</td><td>${esc(p.chucVu)||'—'}</td>
-      <td><button class="btn btn-d" onclick="delPerson(${i})">🗑️</button></td>
-    </tr>`;
-  });
-  w.innerHTML = h + '</tbody></table>';
-}
-
-function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function fmtD(s, en) {
-  if (!s) return '';
-  try { const d = new Date(s); return isNaN(d)?s : (en?d.toLocaleDateString('en-GB'):d.toLocaleDateString('vi-VN')); }
-  catch { return s; }
-}
-
-/* =======================================================
-   REMOVE DIACRITICS (xuất EN)
-   ======================================================= */
-function noTone(s) {
-  if (!s) return '';
-  return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D');
-}
-
-/* =======================================================
-   BUILD 24-COLUMN ROW
-   ======================================================= */
-function buildRow(p) {
-  const en = (lang === 'en');
-  const nm = en ? noTone : x => x;
-  const fd = s => fmtD(s, en);
-  const tr = v => en ? (TRANS[v]||v) : v;
-  return [
-    p.stt, nm(p.ho), nm(p.ten), fd(p.ngaySinh), nm(p.noiSinh), nm(p.nuocSinh),
-    tr(p.gioiTinh), tr(p.honNhan), p.cccd, p.hoChieu, fd(p.ngayCap), fd(p.ngayHetHan),
-    nm(p.diaChi), p.email, p.dienThoai,
-    nm(p.chucVu), nm(p.tenCty), p.dtCty, nm(p.dcCty),
-    tr(p.didiCA), fd(p.ngayCapVisa), fd(p.ngayHHVisa),
-    nm(p.nguoiCT), nm(p.nguoiBT)
-  ];
-}
-
-/* =======================================================
+/* ============================================================
    EXPORT EXCEL
-   ======================================================= */
-function expExcel() {
-  if (!people.length) { toast('⚠️ Danh sách trống!', 'err'); return; }
-  const en = (lang === 'en');
-  const ws = XLSX.utils.aoa_to_sheet([en ? COL_EN : COL_VI, ...people.map(buildRow)]);
-  const colW = [5,12,20,15,15,12,10,14,14,14,12,12,30,25,14,18,25,14,30,15,13,13,20,20];
-  ws['!cols'] = colW.map(w => ({wch: w}));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, en ? 'Visa Records' : 'Danh sach ho so');
-  XLSX.writeFile(wb, en ? 'visa_records.xlsx' : 'ho_so_visa.xlsx');
-  setExpSt('✅ Xuất Excel thành công!', 'ok');
-  toast('✅ Đã xuất Excel ' + people.length + ' hồ sơ!', 'ok');
+   ============================================================ */
+function expExcel(){
+  if(!people.length){toast('⚠️ Danh sách trống!','err');return;}
+  const en=(lang==='en');
+  const ws=XLSX.utils.aoa_to_sheet([en?COL_EN:COL_VI,...people.map(buildRow)]);
+  const colW=[5,12,20,15,15,12,10,14,14,14,12,12,30,25,14,18,25,14,30,15,13,13,20,20];
+  ws['!cols']=colW.map(w=>({wch:w}));
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,en?'Visa Records':'Danh sach ho so');
+  XLSX.writeFile(wb,en?'visa_records.xlsx':'ho_so_visa.xlsx');
+  setExpSt('✅ Xuất Excel thành công!','ok');toast('✅ Đã xuất Excel '+people.length+' hồ sơ!','ok');
 }
 
-/* =======================================================
+/* ============================================================
    EXPORT WORD
-   ======================================================= */
-async function expWord() {
-  if (!people.length) { toast('⚠️ Danh sách trống!', 'err'); return; }
-  setExpSt('📄 Đang tạo Word...', 'run');
-  try {
-    const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType } = docx;
-    const en = (lang === 'en');
-    const nm = en ? noTone : x => x;
-    const fd = s => fmtD(s, en);
-    const tr = v => en ? (TRANS[v]||v) : v;
-    const allCh = [];
-
-    people.forEach((p, idx) => {
-      const title = en ? 'VISA APPLICATION FORM' : 'PHIEU KHAI THONG TIN XIN VISA CHAU AU';
-      const labels = en ? [
-        ['Full Name', nm(p.ho+' '+p.ten)], ['Last Name', nm(p.ho)], ['First Name', nm(p.ten)],
-        ['Date of Birth', fd(p.ngaySinh)], ['Place of Birth', nm(p.noiSinh)], ['Country of Birth', nm(p.nuocSinh)],
-        ['Gender', tr(p.gioiTinh)], ['Marital Status', tr(p.honNhan)],
-        ['ID Number', p.cccd], ['Passport Number', p.hoChieu],
-        ['Issue Date', fd(p.ngayCap)], ['Expiry Date', fd(p.ngayHetHan)],
-        ['Permanent Address', nm(p.diaChi)], ['Email', p.email], ['Phone', p.dienThoai],
-        ['Occupation', nm(p.chucVu)], ['Company Name', nm(p.tenCty)],
-        ['Company Phone', p.dtCty], ['Company Address', nm(p.dcCty)],
-        ['Previously Visited Europe?', tr(p.didiCA)],
-        ['Visa Issue Date', fd(p.ngayCapVisa)], ['Visa Expiry Date', fd(p.ngayHHVisa)],
-        ['Sponsor', nm(p.nguoiCT)], ['Guarantor', nm(p.nguoiBT)]
-      ] : [
-        ['Ho va ten', noTone(p.ho+' '+p.ten)], ['Ho', noTone(p.ho)], ['Ten', noTone(p.ten)],
-        ['Ngay thang nam sinh', fd(p.ngaySinh)], ['Noi sinh', noTone(p.noiSinh)], ['Nuoc sinh', noTone(p.nuocSinh)],
-        ['Gioi tinh', p.gioiTinh], ['Tinh trang hon nhan', p.honNhan],
-        ['CCCD/ID', p.cccd], ['So ho chieu', p.hoChieu],
-        ['Ngay cap ho chieu', fd(p.ngayCap)], ['Ngay het han ho chieu', fd(p.ngayHetHan)],
-        ['Dia chi thuong tru', noTone(p.diaChi)], ['Email', p.email], ['Dien thoai', p.dienThoai],
-        ['Chuc vu', noTone(p.chucVu)], ['Ten cong ty', noTone(p.tenCty)],
-        ['SĐT cong ty', p.dtCty], ['Dia chi cong ty', noTone(p.dcCty)],
-        ['Da tung di chau Au?', p.didiCA],
-        ['Ngay cap visa', fd(p.ngayCapVisa)], ['Ngay het han visa', fd(p.ngayHHVisa)],
-        ['Nguoi chi tra', noTone(p.nguoiCT)], ['Nguoi bao tro', noTone(p.nguoiBT)]
-      ];
-
-      const tblRows = labels.map(([lb, vl]) => new TableRow({ children: [
-        new TableCell({ width:{size:38,type:WidthType.PERCENTAGE}, children:[new Paragraph({children:[new TextRun({text:lb,bold:true})],spacing:{after:60}})], margins:{top:80,bottom:80,left:120,right:80} }),
-        new TableCell({ width:{size:62,type:WidthType.PERCENTAGE}, children:[new Paragraph({children:[new TextRun({text:vl||'—'})],spacing:{after:60}})], margins:{top:80,bottom:80,left:120,right:80} })
-      ]}));
-
-      allCh.push(
-        new Paragraph({text: title, heading: HeadingLevel.HEADING_1, alignment: AlignmentType.CENTER, spacing:{after:200}}),
-        new Paragraph({children:[new TextRun({text: en?`Applicant No. ${p.stt}`:`Ho so so: ${p.stt}`, bold:true, size:26})], alignment:AlignmentType.CENTER, spacing:{after:400}}),
-        new Table({width:{size:100,type:WidthType.PERCENTAGE}, rows:tblRows}),
-        new Paragraph({spacing:{after:400}}),
-        new Paragraph({children:[new TextRun({text: en?'Signature: _______________________':'Chu ky: _______________________', italics:true})], alignment:AlignmentType.RIGHT}),
-        new Paragraph({children:[new TextRun({text: en?`Date: ${new Date().toLocaleDateString('en-GB')}`:`Ngay: ${new Date().toLocaleDateString('vi-VN')}`, italics:true})], alignment:AlignmentType.RIGHT, spacing:{after:200}})
-      );
-      if (idx < people.length - 1) allCh.push(new Paragraph({pageBreakBefore:true}));
+   ============================================================ */
+async function expWord(){
+  if(!people.length){toast('⚠️ Danh sách trống!','err');return;}
+  setExpSt('<div class="spin"></div> Đang tạo Word...','run');
+  try{
+    const{Document,Packer,Paragraph,TextRun,HeadingLevel,AlignmentType,Table,TableRow,TableCell,WidthType}=docx;
+    const en=(lang==='en');const nm=en?noTone:x=>x;const fd=s=>fmtD(s,en);const tr=v=>en?(TRANS[v]||v):v;
+    const allCh=[];
+    people.forEach((p,idx)=>{
+      const title=en?'VISA APPLICATION FORM':'PHIEU KHAI THONG TIN XIN VISA CHAU AU';
+      const labels=en?[['Full Name',nm(p.ho+' '+p.ten)],['Last Name',nm(p.ho)],['First Name',nm(p.ten)],['Date of Birth',fd(p.ngaySinh)],['Place of Birth',nm(p.noiSinh)],['Country of Birth',nm(p.nuocSinh)],['Gender',tr(p.gioiTinh)],['Marital Status',tr(p.honNhan)],['ID Number',p.cccd],['Passport Number',p.hoChieu],['Issue Date',fd(p.ngayCap)],['Expiry Date',fd(p.ngayHetHan)],['Permanent Address',nm(p.diaChi)],['Email',p.email],['Phone',p.dienThoai],['Occupation',nm(p.chucVu)],['Company Name',nm(p.tenCty)],['Company Phone',p.dtCty],['Company Address',nm(p.dcCty)],['Previously Visited Europe?',tr(p.didiCA)],['Visa Issue Date',fd(p.ngayCapVisa)],['Visa Expiry Date',fd(p.ngayHHVisa)],['Sponsor',nm(p.nguoiCT)],['Guarantor',nm(p.nguoiBT)]]:
+      [['Ho va ten',noTone(p.ho+' '+p.ten)],['Ho',noTone(p.ho)],['Ten',noTone(p.ten)],['Ngay thang nam sinh',fd(p.ngaySinh)],['Noi sinh',noTone(p.noiSinh)],['Nuoc sinh',noTone(p.nuocSinh)],['Gioi tinh',p.gioiTinh],['Tinh trang hon nhan',p.honNhan],['CCCD/ID',p.cccd],['So ho chieu',p.hoChieu],['Ngay cap ho chieu',fd(p.ngayCap)],['Ngay het han ho chieu',fd(p.ngayHetHan)],['Dia chi thuong tru',noTone(p.diaChi)],['Email',p.email],['Dien thoai',p.dienThoai],['Chuc vu',noTone(p.chucVu)],['Ten cong ty',noTone(p.tenCty)],['SDT cong ty',p.dtCty],['Dia chi cong ty',noTone(p.dcCty)],['Da tung di chau Au?',p.didiCA],['Ngay cap visa',fd(p.ngayCapVisa)],['Ngay het han visa',fd(p.ngayHHVisa)],['Nguoi chi tra',noTone(p.nguoiCT)],['Nguoi bao tro',noTone(p.nguoiBT)]];
+      const tblRows=labels.map(([lb,vl])=>new TableRow({children:[new TableCell({width:{size:38,type:WidthType.PERCENTAGE},children:[new Paragraph({children:[new TextRun({text:lb,bold:true})],spacing:{after:60}})],margins:{top:80,bottom:80,left:120,right:80}}),new TableCell({width:{size:62,type:WidthType.PERCENTAGE},children:[new Paragraph({children:[new TextRun({text:vl||'—'})],spacing:{after:60}})],margins:{top:80,bottom:80,left:120,right:80}})]}));
+      allCh.push(new Paragraph({text:title,heading:HeadingLevel.HEADING_1,alignment:AlignmentType.CENTER,spacing:{after:200}}),new Paragraph({children:[new TextRun({text:en?`Applicant No. ${p.stt}`:`Ho so so: ${p.stt}`,bold:true,size:26})],alignment:AlignmentType.CENTER,spacing:{after:400}}),new Table({width:{size:100,type:WidthType.PERCENTAGE},rows:tblRows}),new Paragraph({spacing:{after:400}}),new Paragraph({children:[new TextRun({text:en?'Signature: _______________________':'Chu ky: _______________________',italics:true})],alignment:AlignmentType.RIGHT}),new Paragraph({children:[new TextRun({text:en?`Date: ${new Date().toLocaleDateString('en-GB')}`:`Ngay: ${new Date().toLocaleDateString('vi-VN')}`,italics:true})],alignment:AlignmentType.RIGHT,spacing:{after:200}}));
+      if(idx<people.length-1)allCh.push(new Paragraph({pageBreakBefore:true}));
     });
-
-    const doc = new Document({sections:[{properties:{}, children:allCh}]});
-    const blob = await Packer.toBlob(doc);
-    dlBlob(blob, en ? 'visa_applications.docx' : 'ho_so_visa.docx');
-    setExpSt('✅ Xuất Word thành công!', 'ok');
-    toast('✅ Đã xuất Word ' + people.length + ' hồ sơ!', 'ok');
-  } catch(e) {
-    console.error(e);
-    setExpSt('❌ Lỗi Word: ' + e.message, 'err');
-    toast('❌ Lỗi Word: ' + e.message, 'err');
-  }
+    const doc=new Document({sections:[{properties:{},children:allCh}]});
+    const blob=await Packer.toBlob(doc);
+    dlBlob(blob,en?'visa_applications.docx':'ho_so_visa.docx');
+    setExpSt('✅ Xuất Word thành công!','ok');toast('✅ Đã xuất Word '+people.length+' hồ sơ!','ok');
+  }catch(e){console.error(e);setExpSt('❌ Lỗi Word: '+e.message,'err');toast('❌ Lỗi Word: '+e.message,'err');}
 }
 
-/* =======================================================
-   EXPORT PDF (ASCII - tránh lỗi font PDF)
-   ======================================================= */
-function expPDF() {
-  if (!people.length) { toast('⚠️ Danh sách trống!', 'err'); return; }
-  setExpSt('🔴 Đang tạo PDF...', 'run');
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-  const en = (lang === 'en');
-  const fd = s => fmtD(s, en);
-  const tr = v => en ? (TRANS[v]||v) : v;
-  const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight();
-  const M = 18, LH = 7;
+/* ============================================================
+   EXPORT PDF
+   ============================================================ */
+function expPDF(){
+  if(!people.length){toast('⚠️ Danh sách trống!','err');return;}
+  setExpSt('<div class="spin"></div> Đang tạo PDF...','run');
+  const{jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const en=(lang==='en');const fd=s=>fmtD(s,en);const tr=v=>en?(TRANS[v]||v):v;
+  const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(),M=18,LH=7;
   doc.setFont('helvetica');
-
-  people.forEach((p, idx) => {
-    if (idx > 0) doc.addPage();
-    let y = M;
-
-    // Header
-    doc.setFillColor(13,27,46); doc.rect(0,0,W,28,'F');
-    doc.setTextColor(201,168,76); doc.setFontSize(14); doc.setFont('helvetica','bold');
-    doc.text(en?'VISA APPLICATION FORM':'PHIEU KHAI THONG TIN XIN VISA', W/2, 11, {align:'center'});
-    doc.setFontSize(10); doc.setTextColor(200,200,200);
-    doc.text(en?`Applicant No. ${p.stt}`:`Ho so so: ${p.stt}`, W/2, 20, {align:'center'});
-    y = 34;
-
-    doc.setDrawColor(201,168,76); doc.setLineWidth(0.6); doc.line(M,y,W-M,y); y+=7;
-
-    // Dùng ASCII cho PDF (tránh lỗi encoding)
-    const fields = en ? [
-      ['Full Name', noTone(p.ho+' '+p.ten)],['Last Name', noTone(p.ho)],['First Name', noTone(p.ten)],
-      ['Date of Birth', fd(p.ngaySinh)],['Place of Birth', noTone(p.noiSinh)],['Country of Birth', noTone(p.nuocSinh)],
-      ['Gender', tr(p.gioiTinh)],['Marital Status', tr(p.honNhan)],
-      ['ID Number', p.cccd],['Passport Number', p.hoChieu],
-      ['Issue Date', fd(p.ngayCap)],['Expiry Date', fd(p.ngayHetHan)],
-      ['Address', noTone(p.diaChi)],['Email', p.email],['Phone', p.dienThoai],
-      ['Occupation', noTone(p.chucVu)],['Company', noTone(p.tenCty)],
-      ['Company Phone', p.dtCty],['Company Address', noTone(p.dcCty)],
-      ['Visited Europe?', tr(p.didiCA)],
-      ['Visa Issue Date', fd(p.ngayCapVisa)],['Visa Expiry Date', fd(p.ngayHHVisa)],
-      ['Sponsor', noTone(p.nguoiCT)],['Guarantor', noTone(p.nguoiBT)]
-    ] : [
-      ['Ho va ten', noTone(p.ho+' '+p.ten)],['Ho', noTone(p.ho)],['Ten', noTone(p.ten)],
-      ['Ngay sinh', fd(p.ngaySinh)],['Noi sinh', noTone(p.noiSinh)],['Nuoc sinh', noTone(p.nuocSinh)],
-      ['Gioi tinh', p.gioiTinh],['Hon nhan', p.honNhan],
-      ['CCCD/ID', p.cccd],['Ho chieu', p.hoChieu],
-      ['Ngay cap', fd(p.ngayCap)],['Het han HC', fd(p.ngayHetHan)],
-      ['Dia chi', noTone(p.diaChi)],['Email', p.email],['Dien thoai', p.dienThoai],
-      ['Chuc vu', noTone(p.chucVu)],['Cong ty', noTone(p.tenCty)],
-      ['DT cong ty', p.dtCty],['DC cong ty', noTone(p.dcCty)],
-      ['Da di Chau Au?', p.didiCA],
-      ['Ngay cap visa', fd(p.ngayCapVisa)],['Het han visa', fd(p.ngayHHVisa)],
-      ['Nguoi chi tra', noTone(p.nguoiCT)],['Nguoi bao tro', noTone(p.nguoiBT)]
-    ];
-
-    const c2X = M+58, maxW = W-c2X-M;
-    fields.forEach(([lb,vl], fi) => {
-      if (y > H-28) { doc.addPage(); y = M+6; }
-      if (fi%2===0) { doc.setFillColor(248,242,228); doc.rect(M,y-4,W-M*2,LH+1,'F'); }
-      doc.setTextColor(10,22,40); doc.setFontSize(8.5); doc.setFont('helvetica','bold');
-      doc.text(lb+':', M, y);
-      doc.setFont('helvetica','normal'); doc.setTextColor(30,30,60);
-      const lines = doc.splitTextToSize(vl||'—', maxW);
-      doc.text(lines, c2X, y);
-      y += Math.max(LH, lines.length*LH);
-    });
-
-    y += 8;
-    if (y > H-36) { doc.addPage(); y = M+6; }
-    doc.setDrawColor(180,180,180); doc.setLineWidth(0.3); doc.line(M,y,W/2+20,y); y+=7;
-    doc.setFontSize(8.5); doc.setFont('helvetica','italic'); doc.setTextColor(100,100,100);
-    doc.text(en?'Signature: _____________________':'Chu ky: _____________________', W-M-72, y);
-    doc.text(en?`Date: ${new Date().toLocaleDateString('en-GB')}`:`Ngay: ${new Date().toLocaleDateString('vi-VN')}`, W-M-72, y+7);
-
-    doc.setFillColor(13,27,46); doc.rect(0,H-10,W,10,'F');
-    doc.setTextColor(130,130,130); doc.setFontSize(7); doc.setFont('helvetica','normal');
-    doc.text('Visa Management System | Trang '+(idx+1)+'/'+people.length, W/2, H-4, {align:'center'});
+  people.forEach((p,idx)=>{
+    if(idx>0)doc.addPage();let y=M;
+    doc.setFillColor(13,27,46);doc.rect(0,0,W,28,'F');
+    doc.setTextColor(201,168,76);doc.setFontSize(14);doc.setFont('helvetica','bold');
+    doc.text(en?'VISA APPLICATION FORM':'PHIEU KHAI THONG TIN XIN VISA',W/2,11,{align:'center'});
+    doc.setFontSize(10);doc.setTextColor(200,200,200);
+    doc.text(en?`Applicant No. ${p.stt}`:`Ho so so: ${p.stt}`,W/2,20,{align:'center'});
+    y=34;doc.setDrawColor(201,168,76);doc.setLineWidth(0.6);doc.line(M,y,W-M,y);y+=7;
+    const fields=en?[['Full Name',noTone(p.ho+' '+p.ten)],['Last Name',noTone(p.ho)],['First Name',noTone(p.ten)],['Date of Birth',fd(p.ngaySinh)],['Place of Birth',noTone(p.noiSinh)],['Country of Birth',noTone(p.nuocSinh)],['Gender',tr(p.gioiTinh)],['Marital Status',tr(p.honNhan)],['ID Number',p.cccd],['Passport Number',p.hoChieu],['Issue Date',fd(p.ngayCap)],['Expiry Date',fd(p.ngayHetHan)],['Address',noTone(p.diaChi)],['Email',p.email],['Phone',p.dienThoai],['Occupation',noTone(p.chucVu)],['Company',noTone(p.tenCty)],['Company Phone',p.dtCty],['Company Address',noTone(p.dcCty)],['Visited Europe?',tr(p.didiCA)],['Visa Issue Date',fd(p.ngayCapVisa)],['Visa Expiry Date',fd(p.ngayHHVisa)],['Sponsor',noTone(p.nguoiCT)],['Guarantor',noTone(p.nguoiBT)]]:
+    [['Ho va ten',noTone(p.ho+' '+p.ten)],['Ho',noTone(p.ho)],['Ten',noTone(p.ten)],['Ngay sinh',fd(p.ngaySinh)],['Noi sinh',noTone(p.noiSinh)],['Nuoc sinh',noTone(p.nuocSinh)],['Gioi tinh',p.gioiTinh],['Hon nhan',p.honNhan],['CCCD/ID',p.cccd],['Ho chieu',p.hoChieu],['Ngay cap',fd(p.ngayCap)],['Het han HC',fd(p.ngayHetHan)],['Dia chi',noTone(p.diaChi)],['Email',p.email],['Dien thoai',p.dienThoai],['Chuc vu',noTone(p.chucVu)],['Cong ty',noTone(p.tenCty)],['DT cong ty',p.dtCty],['DC cong ty',noTone(p.dcCty)],['Da di Chau Au?',p.didiCA],['Ngay cap visa',fd(p.ngayCapVisa)],['Het han visa',fd(p.ngayHHVisa)],['Nguoi chi tra',noTone(p.nguoiCT)],['Nguoi bao tro',noTone(p.nguoiBT)]];
+    const c2X=M+58,maxW=W-c2X-M;
+    fields.forEach(([lb,vl],fi)=>{if(y>H-28){doc.addPage();y=M+6;}if(fi%2===0){doc.setFillColor(248,242,228);doc.rect(M,y-4,W-M*2,LH+1,'F');}doc.setTextColor(10,22,40);doc.setFontSize(8.5);doc.setFont('helvetica','bold');doc.text(lb+':',M,y);doc.setFont('helvetica','normal');doc.setTextColor(30,30,60);const lines=doc.splitTextToSize(vl||'—',maxW);doc.text(lines,c2X,y);y+=Math.max(LH,lines.length*LH);});
+    y+=8;if(y>H-36){doc.addPage();y=M+6;}
+    doc.setDrawColor(180,180,180);doc.setLineWidth(0.3);doc.line(M,y,W/2+20,y);y+=7;
+    doc.setFontSize(8.5);doc.setFont('helvetica','italic');doc.setTextColor(100,100,100);
+    doc.text(en?'Signature: _____________________':'Chu ky: _____________________',W-M-72,y);
+    doc.text(en?`Date: ${new Date().toLocaleDateString('en-GB')}`:`Ngay: ${new Date().toLocaleDateString('vi-VN')}`,W-M-72,y+7);
+    doc.setFillColor(13,27,46);doc.rect(0,H-10,W,10,'F');
+    doc.setTextColor(130,130,130);doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text('Visa Manager PWA | Trang '+(idx+1)+'/'+people.length,W/2,H-4,{align:'center'});
   });
-
   doc.save(en?'visa_applications.pdf':'ho_so_visa.pdf');
-  setExpSt('✅ Xuất PDF thành công!', 'ok');
-  toast('✅ Đã xuất PDF ' + people.length + ' hồ sơ!', 'ok');
+  setExpSt('✅ Xuất PDF thành công!','ok');toast('✅ Đã xuất PDF '+people.length+' hồ sơ!','ok');
 }
 
-function expJSON() {
-  if (!people.length) { toast('⚠️ Danh sách trống!', 'err'); return; }
-  dlBlob(new Blob([JSON.stringify(people,null,2)],{type:'application/json'}), 'visa_backup_'+Date.now()+'.json');
-  toast('💾 Đã lưu backup JSON!', 'ok');
-}
+function expJSON(){if(!people.length){toast('⚠️ Danh sách trống!','err');return;}dlBlob(new Blob([JSON.stringify(people,null,2)],{type:'application/json'}),'visa_backup_'+Date.now()+'.json');toast('💾 Đã lưu backup JSON!','ok');}
 
-function dlBlob(blob, name) {
-  const u = URL.createObjectURL(blob), a = document.createElement('a');
-  a.href = u; a.download = name; a.click(); URL.revokeObjectURL(u);
-}
+/* ============================================================
+   🎤 VOICE RECOGNITION  – xin quyền mic đúng cách
+   ============================================================ */
+function togVoice(){isRec?stopVoice():startVoice();}
 
-function setExpSt(msg, type) {
-  const el = document.getElementById('expStatus');
-  el.className = 'status' + (type?' '+type:'');
-  el.innerHTML = msg;
-}
-
-/* =======================================================
-   TOAST
-   ======================================================= */
-function toast(msg, type) {
-  const w = document.getElementById('toastWrap');
-  const t = document.createElement('div');
-  t.className = 'toast' + (type==='err'?' err':type==='ok'?' ok':'');
-  t.textContent = msg; w.appendChild(t);
-  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .35s'; setTimeout(()=>t.remove(),350); }, 3000);
-}
-
-/* =======================================================
-   VOICE RECOGNITION
-   ======================================================= */
-function togVoice() { isRec ? stopVoice() : startVoice(); }
-
-function startVoice() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { toast('❌ Dùng Chrome để ghi âm!', 'err'); return; }
-  recObj = new SR(); recObj.lang='vi-VN'; recObj.continuous=true; recObj.interimResults=true;
-  let final = '';
-  recObj.onstart = () => {
-    isRec = true;
+async function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){
+    setSt('vStatus','❌ Trình duyệt không hỗ trợ ghi âm. Hãy dùng Chrome hoặc Edge!','err');
+    toast('❌ Cần Chrome/Edge để ghi âm!','err');return;
+  }
+  // Xin quyền microphone tường minh
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    stream.getTracks().forEach(t=>t.stop());
+    document.getElementById('micNote').classList.remove('show');
+  }catch(permErr){
+    document.getElementById('micNote').classList.add('show');
+    setSt('vStatus','❌ Chưa có quyền Microphone. Xem hướng dẫn phía trên.','err');
+    toast('❌ Cần cấp quyền Microphone!','err');return;
+  }
+  recObj=new SR();recObj.lang='vi-VN';recObj.continuous=true;recObj.interimResults=true;
+  let final='';
+  recObj.onstart=()=>{
+    isRec=true;
     document.getElementById('vBtn').classList.add('recording');
-    document.getElementById('vBtnTxt').textContent = '⏹ Dừng ghi âm';
+    document.getElementById('vBtnTxt').textContent='⏹ Dừng ghi âm';
     document.getElementById('vwave').classList.add('on');
-    setSt('vStatus', '<div class="spin"></div> Đang ghi âm...', 'run');
+    setSt('vStatus','<div class="spin"></div> Đang ghi âm... Nói đi!','run');
   };
-  recObj.onresult = e => {
-    let interim = '';
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (e.results[i].isFinal) final += e.results[i][0].transcript;
-      else interim += e.results[i][0].transcript;
+  recObj.onresult=e=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal)final+=e.results[i][0].transcript;
+      else interim+=e.results[i][0].transcript;
     }
-    document.getElementById('vText').value = final + interim;
+    document.getElementById('vText').value=final+interim;
   };
-  recObj.onerror = e => { setSt('vStatus','❌ Lỗi: '+e.error,'err'); stopVoice(); };
-  recObj.onend = () => { if (isRec) recObj.start(); };
+  recObj.onerror=e=>{setSt('vStatus','❌ Lỗi ghi âm: '+e.error,'err');stopVoice();};
+  recObj.onend=()=>{if(isRec)recObj.start();};
   recObj.start();
 }
 
-function stopVoice() {
-  isRec = false; if (recObj) recObj.stop();
+function stopVoice(){
+  isRec=false;if(recObj)recObj.stop();
   document.getElementById('vBtn').classList.remove('recording');
-  document.getElementById('vBtnTxt').textContent = 'Bắt đầu ghi âm';
+  document.getElementById('vBtnTxt').textContent='Bắt đầu ghi âm';
   document.getElementById('vwave').classList.remove('on');
-  setSt('vStatus', '✅ Ghi âm xong. Nhấn "Phân tích AI" để điền form.', 'ok');
+  setSt('vStatus','✅ Ghi âm xong. Nhấn "Phân tích → Điền form".','ok');
 }
 
-function setSt(id, html, type) {
-  const el = document.getElementById(id);
-  el.className = 'status' + (type?' '+type:'');
-  el.innerHTML = html;
+function parseVoice(){
+  const txt=document.getElementById('vText').value.trim();
+  if(!txt){toast('⚠️ Chưa có văn bản!','err');return;}
+  setSt('vStatus','<div class="spin"></div> AI đang phân tích...','run');
+  setTimeout(()=>{try{fillForm(nlpVi(txt));setSt('vStatus','✅ Đã điền form từ AI!','ok');toast('🤖 AI đã điền form!','ok');}catch(e){setSt('vStatus','❌ Lỗi: '+e.message,'err');}},700);
 }
 
-/* =======================================================
-   AI NLP PARSER (tiếng Việt)
-   ======================================================= */
-function parseVoice() {
-  const txt = document.getElementById('vText').value.trim();
-  if (!txt) { toast('⚠️ Chưa có văn bản!', 'err'); return; }
-  setSt('vStatus', '<div class="spin"></div> AI đang phân tích...', 'run');
-  setTimeout(() => {
-    try {
-      fillForm(nlpVi(txt));
-      setSt('vStatus', '✅ Đã điền form từ AI!', 'ok');
-      toast('🤖 AI đã điền form!', 'ok');
-    } catch(e) { setSt('vStatus','❌ Lỗi: '+e.message,'err'); }
-  }, 700);
-}
-
-function nlpVi(txt) {
-  const r = {};
-  // Tên
-  const nm = txt.match(/(?:họ(?:\s+và)?\s+tên|tên(?:\s+đầy\s+đủ)?|tên\s+là)\s*(?:là\s+)?([A-ZÀ-ỹa-zà-ỹ][A-ZÀ-ỹa-zà-ỹ\s]{4,50})(?=[,.\n]|sinh|cccd|sdt|email)/i)
-    || txt.match(/^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝA-Z][a-zA-ZÀ-ỹ\s]{4,50})(?=[,\n])/i);
-  if (nm) r.fullName = nm[1].trim();
-  // DOB
-  const dob = txt.match(/sinh\s+(?:ngày\s+)?(\d{1,2})[\/\-\s](?:tháng\s+)?(\d{1,2})[\/\-\s](?:năm\s+)?(\d{4})/i)
-    || txt.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-  if (dob) r.ngaySinh = `${dob[3]}-${dob[2].padStart(2,'0')}-${dob[1].padStart(2,'0')}`;
-  // Nơi sinh
-  const ns = txt.match(/(?:quê|nơi\s+sinh|sinh\s+(?:tại|ở))\s+(?:tại\s+)?([^,.\n]+)/i);
-  if (ns) r.noiSinh = ns[1].trim();
-  // Giới tính
-  if (/\bnam\b/i.test(txt)) r.gioiTinh = 'Nam';
-  else if (/\bnữ\b/i.test(txt)) r.gioiTinh = 'Nữ';
-  // Hôn nhân
-  if (/độc\s*thân/i.test(txt)) r.honNhan = 'Độc thân';
-  else if (/kết\s*hôn/i.test(txt)) r.honNhan = 'Đã kết hôn';
-  else if (/ly\s*hôn/i.test(txt)) r.honNhan = 'Ly hôn';
-  // CCCD
-  const cc = txt.match(/(?:cccd|căn\s+cước|cmnd)\s*(?:số\s*)?(\d{9}|\d{12})/i)||txt.match(/\b(\d{12})\b/)||txt.match(/\b(\d{9})\b/);
-  if (cc) r.cccd = cc[1];
-  // Hộ chiếu
-  const hc = txt.match(/(?:hộ\s+chiếu|passport)\s*(?:số\s*)?([A-Z]{1,2}\d{6,8})/i);
-  if (hc) r.hoChieu = hc[1].toUpperCase();
-  // Email
-  const em = txt.match(/([a-zA-Z0-9._+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/);
-  if (em) r.email = em[1];
-  // Điện thoại
-  const dt = txt.match(/\b(0[3-9]\d{8})\b/);
-  if (dt) r.dienThoai = dt[1];
-  // Địa chỉ
-  const dc = txt.match(/(?:địa\s+chỉ|thường\s+trú|sống\s+(?:tại|ở))\s+(?:tại\s+)?([^.\n]+)/i);
-  if (dc) r.diaChi = dc[1].trim();
-  // Chức vụ
-  const cv = txt.match(/(?:chức\s+vụ|nghề|công\s+việc)\s+(?:là\s+)?([^,.\n]+)/i);
-  if (cv) r.chucVu = cv[1].trim();
-  // Công ty
-  const ct = txt.match(/(?:công\s+ty|cty)\s+([^,.\n]+)/i);
-  if (ct) r.tenCty = ct[1].trim();
-  r.didiCA = /đi\s+châu\s+âu/i.test(txt) ? 'Rồi' : 'Chưa';
+/* ============================================================
+   NLP PARSER (tiếng Việt)
+   ============================================================ */
+function nlpVi(txt){
+  const r={};
+  const nm=txt.match(/(?:họ(?:\s+và)?\s+tên|tên(?:\s+đầy\s+đủ)?|tên\s+là)\s*(?:là\s+)?([A-ZÀ-ỹa-zà-ỹ][A-ZÀ-ỹa-zà-ỹ\s]{4,50})(?=[,.\n]|sinh|cccd|sdt|email)/i)||txt.match(/^([A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝ][a-zA-ZÀ-ỹ\s]{4,50})(?=[,\n])/i);
+  if(nm)r.fullName=nm[1].trim();
+  const dob=txt.match(/sinh\s+(?:ngày\s+)?(\d{1,2})[\/\-\s](?:tháng\s+)?(\d{1,2})[\/\-\s](?:năm\s+)?(\d{4})/i)||txt.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+  if(dob)r.ngaySinh=`${dob[3]}-${dob[2].padStart(2,'0')}-${dob[1].padStart(2,'0')}`;
+  const ns=txt.match(/(?:quê|nơi\s+sinh|sinh\s+(?:tại|ở))\s+(?:tại\s+)?([^,.\n]+)/i);
+  if(ns)r.noiSinh=ns[1].trim();
+  if(/\bnam\b/i.test(txt))r.gioiTinh='Nam';else if(/\bnữ\b/i.test(txt))r.gioiTinh='Nữ';
+  if(/độc\s*thân/i.test(txt))r.honNhan='Độc thân';else if(/kết\s*hôn/i.test(txt))r.honNhan='Đã kết hôn';else if(/ly\s*hôn/i.test(txt))r.honNhan='Ly hôn';
+  const cc=txt.match(/(?:cccd|căn\s+cước|cmnd)\s*(?:số\s*)?(\d{9}|\d{12})/i)||txt.match(/\b(\d{12})\b/)||txt.match(/\b(\d{9})\b/);
+  if(cc)r.cccd=cc[1];
+  const hc=txt.match(/(?:hộ\s+chiếu|passport)\s*(?:số\s*)?([A-Z]{1,2}\d{6,8})/i);
+  if(hc)r.hoChieu=hc[1].toUpperCase();
+  const em=txt.match(/([a-zA-Z0-9._+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/);
+  if(em)r.email=em[1];
+  const dt=txt.match(/\b(0[3-9]\d{8})\b/);
+  if(dt)r.dienThoai=dt[1];
+  const dc=txt.match(/(?:địa\s+chỉ|thường\s+trú|sống\s+(?:tại|ở))\s+(?:tại\s+)?([^.\n]+)/i);
+  if(dc)r.diaChi=dc[1].trim();
+  const cv=txt.match(/(?:chức\s+vụ|nghề|công\s+việc)\s+(?:là\s+)?([^,.\n]+)/i);
+  if(cv)r.chucVu=cv[1].trim();
+  const ct=txt.match(/(?:công\s+ty|cty)\s+([^,.\n]+)/i);
+  if(ct)r.tenCty=ct[1].trim();
+  r.didiCA=/đi\s+châu\s+âu/i.test(txt)?'Rồi':'Chưa';
+  r.nuocSinh='Việt Nam';
   return r;
 }
 
-function fillForm(d) {
-  const set = (id, v) => { if (v!=null && document.getElementById(id)) document.getElementById(id).value = v; };
-  if (d.fullName) { set('fullName', d.fullName); splitName(d.fullName); }
-  set('ngaySinh',d.ngaySinh); set('noiSinh',d.noiSinh); set('nuocSinh',d.nuocSinh||'Việt Nam');
-  if (d.gioiTinh) { 
-    const el = document.getElementById('gioiTinh');
-    if (el) { el.value = d.gioiTinh; }
-  }
-  if (d.honNhan)  set('honNhan',  d.honNhan);
-  set('cccd',d.cccd); set('hoChieu',d.hoChieu);
-  set('ngayCap',d.ngayCap); set('ngayHetHan',d.ngayHetHan);
-  set('diaChi',d.diaChi); set('email',d.email); set('dienThoai',d.dienThoai);
-  set('chucVu',d.chucVu); set('tenCty',d.tenCty); set('dtCty',d.dtCty); set('dcCty',d.dcCty);
-  if (d.didiCA) set('didiCA', d.didiCA);
-  set('ngayCapVisa',d.ngayCapVisa); set('ngayHHVisa',d.ngayHHVisa);
-  set('nguoiCT',d.nguoiCT); set('nguoiBT',d.nguoiBT);
+function fillForm(d){
+  const set=(id,v)=>{if(v!=null&&v!==''&&document.getElementById(id))document.getElementById(id).value=v;};
+  if(d.fullName){set('fullName',d.fullName);splitName(d.fullName);}
+  set('ngaySinh',d.ngaySinh);set('noiSinh',d.noiSinh);set('nuocSinh',d.nuocSinh||'Việt Nam');
+  if(d.gioiTinh){const el=document.getElementById('gioiTinh');if(el)el.value=d.gioiTinh;}
+  if(d.honNhan){const el=document.getElementById('honNhan');if(el)el.value=d.honNhan;}
+  set('cccd',d.cccd);set('hoChieu',d.hoChieu);
+  set('ngayCap',d.ngayCap);set('ngayHetHan',d.ngayHetHan);
+  set('diaChi',d.diaChi);set('email',d.email);set('dienThoai',d.dienThoai);
+  set('chucVu',d.chucVu);set('tenCty',d.tenCty);set('dtCty',d.dtCty);set('dcCty',d.dcCty);
+  if(d.didiCA){const el=document.getElementById('didiCA');if(el)el.value=d.didiCA;}
+  set('ngayCapVisa',d.ngayCapVisa);set('ngayHHVisa',d.ngayHHVisa);
+  set('nguoiCT',d.nguoiCT);set('nguoiBT',d.nguoiBT);
 }
 
-/* =======================================================
-   IMAGE PREPROCESSING - Tăng chất lượng ảnh trước OCR
-   ======================================================= */
-function preprocessImage(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        // Scale up nhỏ nhất 1500px width để OCR rõ hơn
-        const scale = Math.max(1, 1500 / img.width);
-        canvas.width  = img.width  * scale;
-        canvas.height = img.height * scale;
-        const ctx = canvas.getContext('2d');
+/* ============================================================
+   📷 OCR – camera vs gallery riêng, fix mobile
+   ============================================================ */
+function openCamera(){document.getElementById('ocrCamera').value='';document.getElementById('ocrCamera').click();}
+function openGallery(){document.getElementById('ocrGallery').value='';document.getElementById('ocrGallery').click();}
 
-        // Vẽ ảnh gốc
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-        // Lấy pixel data
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const d = imageData.data;
-
-        // 1. Grayscale + tăng contrast (histogram stretch)
-        let minL = 255, maxL = 0;
-        for (let i = 0; i < d.length; i += 4) {
-          const lum = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
-          if (lum < minL) minL = lum;
-          if (lum > maxL) maxL = lum;
+function preprocessImage(file){
+  return new Promise(resolve=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const scale=Math.max(1,1600/img.width);
+        const canvas=document.createElement('canvas');
+        canvas.width=img.width*scale;canvas.height=img.height*scale;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,canvas.width,canvas.height);
+        const id=ctx.getImageData(0,0,canvas.width,canvas.height);
+        const d=id.data;
+        let minL=255,maxL=0;
+        for(let i=0;i<d.length;i+=4){const l=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];if(l<minL)minL=l;if(l>maxL)maxL=l;}
+        const range=maxL-minL||1;
+        for(let i=0;i<d.length;i+=4){
+          let v=((0.299*d[i]+0.587*d[i+1]+0.114*d[i+2])-minL)/range*255;
+          v=255/(1+Math.exp(-0.05*(v-128)));
+          v=v<128?Math.max(0,v*0.82):Math.min(255,v*1.12+8);
+          d[i]=d[i+1]=d[i+2]=v;
         }
-        const range = maxL - minL || 1;
-
-        for (let i = 0; i < d.length; i += 4) {
-          const lum = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
-          // Normalize + gamma correction nhẹ
-          let v = ((lum - minL) / range) * 255;
-          // Tăng contrast sigmoid
-          v = 255 / (1 + Math.exp(-0.05*(v - 128)));
-          // Sharpen bằng threshold: dark pixels darker, light pixels lighter
-          v = v < 128 ? Math.max(0, v * 0.85) : Math.min(255, v * 1.1 + 10);
-          d[i] = d[i+1] = d[i+2] = v;
-        }
-
-        // 2. Unsharp mask (sharpen) - tạo blur rồi trừ
-        ctx.putImageData(imageData, 0, 0);
-        const sharpCanvas = document.createElement('canvas');
-        sharpCanvas.width = canvas.width;
-        sharpCanvas.height = canvas.height;
-        const sCtx = sharpCanvas.getContext('2d');
-        // Vẽ ảnh đã xử lý
-        sCtx.drawImage(canvas, 0, 0);
-        // Overlay với filter sharpen
-        sCtx.filter = 'contrast(1.3) brightness(1.05)';
-        sCtx.drawImage(canvas, 0, 0);
-
-        resolve(sharpCanvas.toDataURL('image/png', 1.0));
+        ctx.putImageData(id,0,0);
+        resolve(canvas.toDataURL('image/png',1.0));
       };
-      img.src = e.target.result;
+      img.src=e.target.result;
     };
     reader.readAsDataURL(file);
   });
 }
 
-/* =======================================================
-   MRZ PARSER - Đọc 2 dòng mã máy quét hộ chiếu
-   =======================================================
-   Dòng 1: P<VNMLE<<HOANG<DUC<ANH<<<<<<<<<<<<<<<<<<<<<<<
-   Dòng 2: K0017023<1VNM1301243M2703040<<<<<<<<<<<<<<02
-   ======================================================= */
-function parseMRZ(text) {
-  // Chuẩn hóa text: xóa khoảng trắng thừa, uppercase
-  const lines = text.split('\n').map(l => l.replace(/\s+/g,'').toUpperCase());
-  
-  // Tìm 2 dòng MRZ (dài 44 ký tự, chỉ gồm A-Z, 0-9, <)
-  const mrzLines = lines.filter(l => /^[A-Z0-9<]{30,44}$/.test(l));
-  
-  if (mrzLines.length < 2) return null;
-  
-  // Lấy 2 dòng cuối phù hợp nhất (dài 44)
-  let line1 = '', line2 = '';
-  for (const l of mrzLines) {
-    if (l.startsWith('P<') || l.startsWith('P<VNM')) { line1 = l; }
-    else if (/^[A-Z0-9]{1,2}[0-9]{7}/.test(l)) { line2 = l; }
-  }
-  
-  // Fallback: lấy 2 dòng dài nhất
-  if (!line1 || !line2) {
-    const sorted = [...mrzLines].sort((a,b) => b.length - a.length);
-    if (sorted.length >= 2) {
-      // Dòng bắt đầu bằng P< là dòng 1
-      for (const l of sorted) {
-        if (!line1 && (l.startsWith('P') || l.includes('VNM'))) line1 = l;
-        else if (!line2) line2 = l;
-      }
+function parseMRZ(text){
+  const lines=text.split('\n').map(l=>l.replace(/\s+/g,'').toUpperCase());
+  const mrzLines=lines.filter(l=>/^[A-Z0-9<]{30,44}$/.test(l));
+  if(mrzLines.length<2)return null;
+  let line1='',line2='';
+  for(const l of mrzLines){if(l.startsWith('P<')||l.startsWith('P<VNM'))line1=l;else if(/^[A-Z0-9]{1,2}[0-9]{7}/.test(l))line2=l;}
+  if(!line1||!line2){const sorted=[...mrzLines].sort((a,b)=>b.length-a.length);for(const l of sorted){if(!line1&&(l.startsWith('P')||l.includes('VNM')))line1=l;else if(!line2)line2=l;}}
+  if(!line1||!line2)return null;
+  const result={};
+  try{
+    const doubleLtIdx=line1.indexOf('<<',5);
+    if(doubleLtIdx>5){
+      const surnPart=line1.slice(5,doubleLtIdx).replace(/</g,' ').trim();
+      const givenPart=line1.slice(doubleLtIdx+2).replace(/<+/g,' ').trim();
+      result.fullName=(givenPart+' '+surnPart).trim();
     }
-  }
-  
-  if (!line1 || !line2) return null;
-  
-  const result = {};
-  
-  try {
-    // === PARSE DÒNG 1 ===
-    // P<VNM[Họ]<<[Tên]<<<...
-    // Bỏ qua "P<VNM" (5 ký tự đầu)
-    const nameSection = line1.slice(5).replace(/</g,' ').trim();
-    const doubleLtIdx = line1.indexOf('<<', 5);
-    if (doubleLtIdx > 5) {
-      const surnamePart = line1.slice(5, doubleLtIdx).replace(/</g,' ').trim();
-      const givenPart   = line1.slice(doubleLtIdx+2).replace(/<+/g,' ').trim();
-      // Hộ chiếu VN: HỌ PHẦN <<< TÊN PHẦN
-      // Ví dụ: LE<<HOANG<DUC<ANH → Họ: LE, Tên: HOANG DUC ANH
-      result.fullName = (givenPart + ' ' + surnamePart).trim();
-      result.ho = surnamePart;
-      result.ten = givenPart;
-    }
-    
-    // === PARSE DÒNG 2 ===
-    // Pos 0-8:  Số hộ chiếu (9 ký tự)
-    // Pos 9:    Check digit
-    // Pos 10-12: Quốc tịch
-    // Pos 13-18: Ngày sinh YYMMDD
-    // Pos 19:   Check digit
-    // Pos 20:   Giới tính M/F
-    // Pos 21-26: Ngày hết hạn YYMMDD
-    // Pos 27:   Check digit
-    const l2 = line2.padEnd(44, '<');
-    
-    // Số hộ chiếu (loại bỏ <)
-    result.hoChieu = l2.slice(0,9).replace(/</g,'');
-    
-    // Ngày sinh
-    const dobRaw = l2.slice(13,19);
-    if (/^\d{6}$/.test(dobRaw)) {
-      let yy = parseInt(dobRaw.slice(0,2));
-      const mm = dobRaw.slice(2,4);
-      const dd = dobRaw.slice(4,6);
-      // Năm sinh: nếu yy > 30 → 1900s, else 2000s (hợp lý cho visa)
-      const fullYear = yy > 30 ? 1900+yy : 2000+yy;
-      result.ngaySinh = `${fullYear}-${mm}-${dd}`;
-    }
-    
-    // Giới tính
-    const sex = l2[20];
-    if (sex === 'M') result.gioiTinh = 'Nam';
-    else if (sex === 'F') result.gioiTinh = 'Nữ';
-    
-    // Ngày hết hạn
-    const expRaw = l2.slice(21,27);
-    if (/^\d{6}$/.test(expRaw)) {
-      let yy = parseInt(expRaw.slice(0,2));
-      const mm = expRaw.slice(2,4);
-      const dd = expRaw.slice(4,6);
-      const fullYear = yy < 50 ? 2000+yy : 1900+yy;
-      result.ngayHetHan = `${fullYear}-${mm}-${dd}`;
-    }
-    
-    result.quocTich = 'Việt Nam';
-    result.nuocSinh = 'Việt Nam';
-    
-  } catch(err) {
-    console.warn('MRZ parse error:', err);
-  }
-  
-  return Object.keys(result).length > 1 ? result : null;
+    const l2=line2.padEnd(44,'<');
+    result.hoChieu=l2.slice(0,9).replace(/</g,'');
+    const dobRaw=l2.slice(13,19);
+    if(/^\d{6}$/.test(dobRaw)){let yy=parseInt(dobRaw.slice(0,2));const mm=dobRaw.slice(2,4),dd=dobRaw.slice(4,6);result.ngaySinh=`${yy>30?1900+yy:2000+yy}-${mm}-${dd}`;}
+    const sex=l2[20];if(sex==='M')result.gioiTinh='Nam';else if(sex==='F')result.gioiTinh='Nữ';
+    const expRaw=l2.slice(21,27);
+    if(/^\d{6}$/.test(expRaw)){let yy=parseInt(expRaw.slice(0,2));const mm=expRaw.slice(2,4),dd=expRaw.slice(4,6);result.ngayHetHan=`${yy<50?2000+yy:1900+yy}-${mm}-${dd}`;}
+    result.quocTich='Việt Nam';result.nuocSinh='Việt Nam';
+  }catch(err){console.warn('MRZ err:',err);}
+  return Object.keys(result).length>1?result:null;
 }
 
-/* =======================================================
-   OCR (Tesseract.js) - Đã cải thiện
-   ======================================================= */
-async function handleOCRFile(file) {
-  if (!file) return;
-  const imgEl = document.getElementById('ocrImg');
-  imgEl.src = URL.createObjectURL(file); imgEl.style.display = 'block';
-  const bar = document.getElementById('ocrBar'), fill = document.getElementById('ocrFill');
-  bar.style.display = 'block'; fill.style.width = '0';
-  setSt('ocrStatus', '<div class="spin"></div> Đang tiền xử lý ảnh...', 'run');
+function nlpPassport(txt){
+  const r={};const lines=txt.split('\n').map(l=>l.trim()).filter(l=>l);
+  for(let i=0;i<lines.length;i++){const l=lines[i];
+    if(/full\s*name|ho\s*va\s*ten|họ\s*và\s*tên/i.test(l)){const s=l.replace(/full\s*name|ho\s*va\s*ten|họ\s*và\s*tên/i,'').replace(/[:\-\/]/g,'').trim();if(s.length>3)r.fullName=s;else if(i+1<lines.length&&/^[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝ\s]{5,}$/.test(lines[i+1]))r.fullName=lines[i+1].trim();}
+    if(!r.fullName&&/^[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝ][A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝ\s]{9,49}$/.test(l)&&!/SOCIALIST|REPUBLIC|VIETNAM|CHIẾU|PASSPORT|NATIONALITY|DATE|BIRTH|PLACE|ISSUE|EXPIRY|SEX|GIỚI|NGÀY|NƠI|CẤP/i.test(l)&&!/[<]/.test(l))r.fullName=l.trim();
+  }
+  const hcMatch=txt.match(/\b([A-Z][0-9]{7,8})\b/);if(hcMatch)r.hoChieu=hcMatch[1];
+  const dobPats=[/(?:date\s*of\s*birth|ngày\s*sinh)\s*[:\-\/]?\s*(\d{1,2})\s*[\/\-\.\s]\s*(\d{1,2})\s*[\/\-\.\s]\s*(\d{4})/i,/(\d{2})\s*\/\s*(\d{2})\s*\/\s*(\d{4})/,/(\d{2})\s*\.\s*(\d{2})\s*\.\s*(\d{4})/];
+  for(const p of dobPats){const m=txt.match(p);if(m){r.ngaySinh=`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;break;}}
+  const nb=txt.match(/(?:place\s*of\s*birth|nơi\s*sinh)\s*[:\-\/]?\s*([A-ZÀ-ỹa-zà-ỹ\.\s]{3,40})/i);if(nb)r.noiSinh=nb[1].trim();
+  if(/\bNAM\b|\bMALE\b|\bNAM\s*\/\s*M\b/i.test(txt))r.gioiTinh='Nam';else if(/\bNỮ\b|\bFEMALE\b/i.test(txt))r.gioiTinh='Nữ';
+  const nc=txt.match(/(?:date\s*of\s*issue|ngày\s*cấp)\s*[:\-\/]?\s*(\d{1,2})\s*[\/\-\.\s]\s*(\d{1,2})\s*[\/\-\.\s]\s*(\d{4})/i);if(nc)r.ngayCap=`${nc[3]}-${nc[2].padStart(2,'0')}-${nc[1].padStart(2,'0')}`;
+  const nh=txt.match(/(?:expir|hết\s*hạn|có\s*giá\s*trị)\s*[:\-\/]?\s*(\d{1,2})\s*[\/\-\.\s]\s*(\d{1,2})\s*[\/\-\.\s]\s*(\d{4})/i);if(nh)r.ngayHetHan=`${nh[3]}-${nh[2].padStart(2,'0')}-${nh[1].padStart(2,'0')}`;
+  r.nuocSinh='Việt Nam';return r;
+}
 
-  try {
-    // Bước 1: Tiền xử lý ảnh
-    const processedDataUrl = await preprocessImage(file);
-    fill.style.width = '15%';
-    setSt('ocrStatus', '<div class="spin"></div> Tesseract OCR đang nhận diện...', 'run');
-
-    // Bước 2: OCR với config tối ưu cho hộ chiếu
-    const worker = await Tesseract.createWorker(['vie','eng'], 1, {
-      logger: m => {
-        if (m.status === 'recognizing text') {
-          const pct = 15 + Math.round(m.progress * 80);
-          fill.style.width = pct + '%';
-          setSt('ocrStatus', '<div class="spin"></div> Nhận diện: '+pct+'%', 'run');
-        }
-      }
-    });
-
-    // Cấu hình tốt hơn cho tài liệu
-    await worker.setParameters({
-      tessedit_pageseg_mode: '1',      // Automatic page segmentation with OSD
-      preserve_interword_spaces: '1',
-      tessedit_char_whitelist: '',     // Không giới hạn ký tự
-    });
-
-    // OCR ảnh đã xử lý
-    const { data: { text } } = await worker.recognize(processedDataUrl);
+async function handleOCRFile(file){
+  if(!file)return;
+  const imgEl=document.getElementById('ocrImg');
+  imgEl.src=URL.createObjectURL(file);imgEl.style.display='block';
+  const bar=document.getElementById('ocrBar'),fill=document.getElementById('ocrFill');
+  bar.style.display='block';fill.style.width='5%';
+  setSt('ocrStatus','<div class="spin"></div> Đang tiền xử lý ảnh...','run');
+  try{
+    const processed=await preprocessImage(file);
+    fill.style.width='20%';
+    setSt('ocrStatus','<div class="spin"></div> Tesseract đang nhận diện...','run');
+    const worker=await Tesseract.createWorker(['vie','eng'],1,{logger:m=>{if(m.status==='recognizing text'){const pct=20+Math.round(m.progress*75);fill.style.width=pct+'%';setSt('ocrStatus','<div class="spin"></div> Nhận diện: '+pct+'%','run');}}});
+    await worker.setParameters({tessedit_pageseg_mode:'1',preserve_interword_spaces:'1'});
+    const{data:{text}}=await worker.recognize(processed);
     await worker.terminate();
-    fill.style.width = '95%';
-
-    setSt('ocrStatus', '<div class="spin"></div> Đang phân tích dữ liệu hộ chiếu...', 'run');
-
-    // Bước 3: Thử MRZ parser trước (chính xác nhất)
-    const mrzData = parseMRZ(text);
-    
-    // Bước 4: Kết hợp NLP parser cho các trường không có trong MRZ
-    const nlpData = nlpPassport(text);
-    
-    // Merge: MRZ ưu tiên hơn NLP
-    const finalData = Object.assign({}, nlpData, mrzData);
-
-    document.getElementById('vText').value = text;
-    const tabs = document.querySelectorAll('.tab-btn');
-    swTab('voice', tabs[0]);
+    fill.style.width='100%';
+    const mrzData=parseMRZ(text);
+    const nlpData=nlpPassport(text);
+    const finalData=Object.assign({},nlpData,mrzData);
+    document.getElementById('vText').value=text;
+    swTab('voice',document.querySelector('.tab-btn'));
     fillForm(finalData);
-    
-    fill.style.width = '100%';
-    
-    const mrzMsg = mrzData ? ' (MRZ ✓)' : '';
-    setSt('ocrStatus', '✅ OCR xong! Đã nhận diện tự động' + mrzMsg + '. Vui lòng kiểm tra lại form.', 'ok');
-    toast('🔍 OCR thành công' + mrzMsg + '!', 'ok');
-  } catch(e) {
-    setSt('ocrStatus', '❌ OCR lỗi: '+e.message, 'err');
-    toast('❌ OCR lỗi: '+e.message, 'err');
+    const mrzMsg=mrzData?' (MRZ ✓)':'';
+    setSt('ocrStatus','✅ Nhận diện xong'+mrzMsg+'! Kiểm tra lại form.','ok');
+    toast('🔍 OCR thành công'+mrzMsg+'!','ok');
+  }catch(e){
+    setSt('ocrStatus','❌ OCR lỗi: '+e.message,'err');
+    toast('❌ OCR lỗi: '+e.message,'err');
+    console.error(e);
   }
 }
 
-/* =======================================================
-   PASSPORT-SPECIFIC NLP PARSER
-   ======================================================= */
-function nlpPassport(txt) {
-  const r = {};
-  const lines = txt.split('\n').map(l => l.trim()).filter(l => l);
-  
-  // Họ và tên - tìm dòng sau "Full name" hoặc dòng ALL CAPS dài
-  for (let i = 0; i < lines.length; i++) {
-    const l = lines[i];
-    // Tìm dòng chứa "Full name" hoặc "Họ và tên"
-    if (/full\s*name|ho\s*va\s*ten|họ\s*và\s*tên/i.test(l)) {
-      // Tên có thể ở dòng tiếp theo hoặc cùng dòng
-      const sameLine = l.replace(/full\s*name|ho\s*va\s*ten|họ\s*và\s*tên/i,'').replace(/[:\-\/]/g,'').trim();
-      if (sameLine.length > 3 && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝA-Z]/.test(sameLine)) {
-        r.fullName = sameLine;
-      } else if (i+1 < lines.length) {
-        const next = lines[i+1];
-        if (/^[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝ\s]{5,}$/.test(next)) {
-          r.fullName = next.trim();
-        }
-      }
-    }
-    // Tìm dòng ALLCAPS dài 10-50 ký tự (tên người)
-    if (!r.fullName && /^[LÊ HOANG DUCANHBÀ-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝa-z]{0,0}[A-Z][A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝ\s]{9,49}$/.test(l) && !/SOCIALIST|REPUBLIC|VIETNAM|CHIẾU|PASSPORT|NATIONALITY|DATE|BIRTH|PLACE|ISSUE|EXPIRY|SEX|GIỚI|NGÀY|NƠI|CẤP/i.test(l)) {
-      // Kiểm tra không phải MRZ
-      if (!/[<]/.test(l)) {
-        r.fullName = l.trim();
-      }
-    }
-  }
-  
-  // Số hộ chiếu - pattern K + 7 digits hoặc B + 7 digits
-  const hcMatch = txt.match(/\b([A-Z][0-9]{7,8})\b/);
-  if (hcMatch) r.hoChieu = hcMatch[1];
-  
-  // Ngày sinh - nhiều format
-  const dobPatterns = [
-    /(?:date\s*of\s*birth|ngày\s*sinh|dob)\s*[:\-\/]?\s*(\d{1,2})\s*[\/\-\.\s]\s*(\d{1,2})\s*[\/\-\.\s]\s*(\d{4})/i,
-    /(\d{2})\s*\/\s*(\d{2})\s*\/\s*(\d{4})/,
-    /(\d{2})\s*\.\s*(\d{2})\s*\.\s*(\d{4})/,
-  ];
-  for (const pat of dobPatterns) {
-    const m = txt.match(pat);
-    if (m) {
-      r.ngaySinh = `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
-      break;
-    }
-  }
-  
-  // Nơi sinh
-  const nbMatch = txt.match(/(?:place\s*of\s*birth|nơi\s*sinh|n[oơ]i\s*sinh)\s*[:\-\/]?\s*([A-ZÀ-ỹa-zà-ỹ\.\s]{3,40})/i);
-  if (nbMatch) r.noiSinh = nbMatch[1].trim();
-  
-  // Giới tính
-  if (/\bNAM\b|\bMALE\b|\bM\s*\/\s*M\b/i.test(txt)) r.gioiTinh = 'Nam';
-  else if (/\bNỮ\b|\bFEMALE\b|\bF\b/i.test(txt)) r.gioiTinh = 'Nữ';
-  
-  // Ngày cấp
-  const ncPatterns = [
-    /(?:date\s*of\s*issue|ngày\s*cấp|ngay\s*cap)\s*[:\-\/]?\s*(\d{1,2})\s*[\/\-\.\s]\s*(\d{1,2})\s*[\/\-\.\s]\s*(\d{4})/i,
-  ];
-  for (const pat of ncPatterns) {
-    const m = txt.match(pat);
-    if (m) { r.ngayCap = `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`; break; }
-  }
-  
-  // Ngày hết hạn
-  const nhPatterns = [
-    /(?:date\s*of\s*expiry|expir|hết\s*hạn|het\s*han|có\s*giá\s*trị)\s*[:\-\/]?\s*(\d{1,2})\s*[\/\-\.\s]\s*(\d{1,2})\s*[\/\-\.\s]\s*(\d{4})/i,
-  ];
-  for (const pat of nhPatterns) {
-    const m = txt.match(pat);
-    if (m) { r.ngayHetHan = `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`; break; }
-  }
-  
-  r.quocTich = 'Việt Nam';
-  r.nuocSinh = 'Việt Nam';
-  
-  return r;
-}
+/* ============================================================
+   LOCAL STORAGE
+   ============================================================ */
+function saveData(){try{localStorage.setItem('visaPeople',JSON.stringify(people));}catch(e){}}
+function loadData(){try{const d=localStorage.getItem('visaPeople');if(d){people=JSON.parse(d);stt=people.length+1;}}catch(e){}}
 
-/* =======================================================
+/* ============================================================
    INIT
-   ======================================================= */
-window.onload = () => {
-  loadData();
-  render();
-  initTelex();
-  // Gắn Telex cho fullName trigger splitName
-  const fnInput = document.getElementById('fullName');
-  fnInput.addEventListener('input', () => splitName(fnInput.value));
-  toast('🛂 Hệ thống sẵn sàng! Bộ gõ Telex đã kích hoạt.', 'ok');
-  console.log('%c🛂 Visa Manager PWA v3.0', 'color:#C9A84C;font-size:16px;font-weight:bold');
+   ============================================================ */
+window.onload=()=>{
+  loadData();render();initTelex();
+  const fnInput=document.getElementById('fullName');
+  fnInput.addEventListener('input',()=>splitName(fnInput.value));
+  toast('🛂 Visa Manager sẵn sàng!','ok');
 };
-
-/* PWA: Lưu dữ liệu vào localStorage để không mất khi tắt app */
-function saveData() {
-  try { localStorage.setItem('visaPeople', JSON.stringify(people)); } catch(e) {}
-}
-function loadData() {
-  try {
-    const d = localStorage.getItem('visaPeople');
-    if (d) { people = JSON.parse(d); stt = people.length + 1; }
-  } catch(e) {}
-}
 </script>
 
-<!-- PWA Install Banner -->
-<div id="pwaInstall" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;
-  background:#0d1b2e;border-top:2px solid #c9a84c;padding:14px 18px;
-  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-  <div style="display:flex;align-items:center;gap:12px;">
-    <img src="icons/icon-72.png" style="width:40px;height:40px;border-radius:8px;">
-    <div>
-      <div style="color:#c9a84c;font-weight:700;font-size:14px;font-family:Arial;">Cài ứng dụng</div>
-      <div style="color:#aaa;font-size:12px;font-family:Arial;">Dùng offline, không cần trình duyệt</div>
-    </div>
+<!-- PWA INSTALL BANNER -->
+<div id="pwaInstall" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#0d1b2e;border-top:2px solid #c9a84c;padding:12px 16px;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-bottom:calc(12px + env(safe-area-inset-bottom))">
+  <div style="display:flex;align-items:center;gap:10px">
+    <img src="icons/icon-72.png" style="width:38px;height:38px;border-radius:8px">
+    <div><div style="color:#c9a84c;font-weight:700;font-size:14px;font-family:Arial">Cài ứng dụng Visa Manager</div><div style="color:#aaa;font-size:12px;font-family:Arial">Dùng offline · Không cần trình duyệt</div></div>
   </div>
-  <div style="display:flex;gap:8px;">
-    <button onclick="document.getElementById('pwaInstall').style.display='none'"
-      style="padding:8px 14px;border-radius:6px;border:1px solid #555;background:transparent;color:#aaa;cursor:pointer;font-family:Arial;font-size:13px;">Bỏ qua</button>
-    <button id="pwaInstallBtn"
-      style="padding:8px 18px;border-radius:6px;border:none;background:#c9a84c;color:#fff;cursor:pointer;font-family:Arial;font-size:13px;font-weight:700;">⬇ Cài ngay</button>
+  <div style="display:flex;gap:8px">
+    <button onclick="document.getElementById('pwaInstall').style.display='none'" style="padding:8px 14px;border-radius:6px;border:1px solid #555;background:transparent;color:#aaa;cursor:pointer;font-family:Arial;font-size:13px">Bỏ qua</button>
+    <button id="pwaInstallBtn" style="padding:8px 18px;border-radius:6px;border:none;background:#c9a84c;color:#fff;cursor:pointer;font-family:Arial;font-size:13px;font-weight:700">⬇ Cài ngay</button>
   </div>
 </div>
 
 <script>
-// ==================== PWA SERVICE WORKER ====================
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').then(reg => {
-      console.log('SW registered:', reg.scope);
-    }).catch(err => console.warn('SW failed:', err));
-  });
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{});});
 }
-
-// ==================== INSTALL PROMPT ====================
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('pwaInstall').style.display = 'flex';
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredPrompt=e;
+  document.getElementById('pwaInstall').style.display='flex';
 });
-
-document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
-  if (!deferredPrompt) return;
+document.getElementById('pwaInstallBtn').addEventListener('click',async()=>{
+  if(!deferredPrompt)return;
   deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  document.getElementById('pwaInstall').style.display = 'none';
-  if (outcome === 'accepted') toast('✅ Đã cài ứng dụng!', 'ok');
+  const{outcome}=await deferredPrompt.userChoice;
+  deferredPrompt=null;
+  document.getElementById('pwaInstall').style.display='none';
+  if(outcome==='accepted')toast('🎉 Đã cài ứng dụng!','ok');
 });
-
-window.addEventListener('appinstalled', () => {
-  document.getElementById('pwaInstall').style.display = 'none';
-  toast('🎉 Ứng dụng đã được cài đặt!', 'ok');
+window.addEventListener('appinstalled',()=>{
+  document.getElementById('pwaInstall').style.display='none';
+  toast('🎉 Visa Manager đã được cài đặt!','ok');
 });
 </script>
 </body>
