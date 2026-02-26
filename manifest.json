@@ -1,0 +1,22 @@
+{
+  "name": "Hệ Thống Quản Lý Hồ Sơ Visa",
+  "short_name": "Visa Manager",
+  "description": "Quản lý hồ sơ xin visa Châu Âu - OCR, nhập liệu AI, xuất Excel/Word/PDF",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d1b2e",
+  "theme_color": "#c9a84c",
+  "orientation": "portrait-primary",
+  "lang": "vi",
+  "icons": [
+    { "src": "icons/icon-72.png",  "sizes": "72x72",   "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-96.png",  "sizes": "96x96",   "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-144.png", "sizes": "144x144", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-152.png", "sizes": "152x152", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": []
+}
